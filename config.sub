@@ -309,7 +309,7 @@ case $basic_machine in
 	| sparcv8 | sparcv9 | sparcv9b | sparcv9v \
 	| spu \
 	| tahoe | tic4x | tic54x | tic55x | tic6x | tic80 | tron \
-	| ubicom32 \
+	| ubicom32 | ubi32 \
 	| v850 | v850e | v850e1 | v850e2 | v850es | v850e2v3 \
 	| visium \
 	| wasm32 \
@@ -439,7 +439,7 @@ case $basic_machine in
 	| tic30-* | tic4x-* | tic54x-* | tic55x-* | tic6x-* | tic80-* \
 	| tile*-* \
 	| tron-* \
-	| ubicom32-* \
+	| ubicom32-* | ubi32-* \
 	| v850-* | v850e-* | v850e1-* | v850es-* | v850e2-* | v850e2v3-* \
 	| vax-* \
 	| visium-* \
@@ -1208,6 +1208,9 @@ case $basic_machine in
 	tpf)
 		basic_machine=s390x-ibm
 		os=-tpf
+		;;
+	ubi32)
+		basic_machine=ubi32-qualcomm
 		;;
 	udi29k)
 		basic_machine=a29k-amd

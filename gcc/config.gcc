@@ -510,6 +510,11 @@ sh[123456789lbe]*-*-* | sh-*-*)
 	extra_options="${extra_options} fused-madd.opt"
 	extra_objs="${extra_objs} sh_treg_combine.o sh-mem.o sh_optimize_sett_clrt.o"
 	;;
+ubi32-*-*)
+	cpu_type=ubi32
+	c_target_objs="ubi32-c.o"
+	cxx_target_objs="ubi32-c.o"
+	;;
 v850*-*-*)
 	cpu_type=v850
 	;;
@@ -3024,6 +3029,14 @@ tilepro*-*-linux*)
 	c_target_objs="${c_target_objs} tilepro-c.o"
 	cxx_target_objs="${cxx_target_objs} tilepro-c.o"
 	extra_headers="feedback.h"
+	;;
+ubi32-*-elf)
+	tm_file="${tm_file} dbxelf.h elfos.h ubi32/elf.h"
+	tmake_file="ubi32/t-ubi32-elf ubi32/t-fprules-softfp soft-fp/t-softfp"
+	c_target_objs="ubi32-c.o"
+	cxx_target_objs="ubi32-c.o"
+	gnu_ld=yes
+	gnu_as=yes
 	;;
 v850-*-rtems*)
 	target_cpu_default="TARGET_CPU_generic"

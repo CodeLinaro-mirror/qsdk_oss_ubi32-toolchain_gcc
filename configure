@@ -3854,6 +3854,9 @@ case "${target}" in
   tilepro*-*-* | tilegx*-*-*)
     noconfigdirs="$noconfigdirs sim"
     ;;
+  ubi32-*-*)
+    noconfigdirs="$noconfigdirs target-libffi"
+    ;;
   v810-*-*)
     noconfigdirs="$noconfigdirs bfd binutils gas gdb ld opcodes target-libgloss"
     ;;
@@ -6652,7 +6655,7 @@ fi
 # Check whether --with-gcc-major-version-only was given.
 if test "${with_gcc_major_version_only+set}" = set; then :
   withval=$with_gcc_major_version_only; if test x$with_gcc_major_version_only = xyes ; then
-        get_gcc_base_ver="sed -e 's/^\([0-9]*\).*\$\$/\1/'"
+        get_gcc_base_ver="sed -e 's/^\([0-9]*\).*/\1/'"
       fi
 
 fi
