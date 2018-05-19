@@ -617,22 +617,23 @@
      operands[4] = GEN_INT (shift);
    }")
 
+;FIXME -- Why is this a peephole rather than code selector?
 ; In general for a 16-bit unsigned constant that has bit 15 set
 ; then we need a movei/move.2 pair unless we can represent it
 ; via just a move.2.
 ;
-(define_peephole2
-  [(set (match_operand:SI 0 "register_operand" "")
-	(match_operand:SI 1 "const_int_operand" ""))]
-  "(INTVAL (operands[1]) & 0xffff8000) == 0x8000
-    && (INTVAL (operands[1]) & 0xffff) < 0xff80"
-  [(set (match_dup 2)
-	(match_dup 1))
-   (set (match_dup 0)
-	(zero_extend:SI (match_dup 2)))]
-  "{
-     operands[2] = gen_rtx_REG (HImode, REGNO (operands[0]));
-   }")
+;(define_peephole2
+;  [(set (match_operand:SI 0 "register_operand" "")
+;	(match_operand:SI 1 "const_int_operand" ""))]
+;  "(INTVAL (operands[1]) & 0xffff8000) == 0x8000
+;    && (INTVAL (operands[1]) & 0xffff) < 0xff80"
+;  [(set (match_dup 2)
+;	(match_dup 1))
+;   (set (match_dup 0)
+;	(zero_extend:SI (match_dup 2)))]
+;  "{
+;     operands[2] = gen_rtx_REG (HImode, REGNO (operands[0]));
+;   }")
 
 ; Exactly the same as the peephole2 preceding except that this targets a
 ; general non-immediate instead of D register.  Hopefully the later optimization

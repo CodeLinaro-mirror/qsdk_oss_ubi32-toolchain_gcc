@@ -3256,6 +3256,7 @@ ubi32_regno_ok_for_index_p (int regno, int strict)
   if ((regno >= FIRST_DATA_REGNUM && regno <= LAST_DATA_REGNUM)
       || (!strict && regno >= FIRST_PSEUDO_REGISTER)
       || (strict && (reg_renumber
+		     && reg_renumber[regno] >= FIRST_DATA_REGNUM
 		     && reg_renumber[regno] <= LAST_DATA_REGNUM)))
     return 1;
 
@@ -3309,7 +3310,7 @@ ubi32_is_index_expr (machine_mode mode, rtx x, int strict)
 	}
     }
 
-  if (mode != SFmode && mode != SImode && mode != HImode && mode != QImode)
+  if (mode != E_SFmode && mode != E_SImode && mode != E_HImode && mode != E_QImode)
     return false;
 
   /* Register index scaled by mode of operand: REG + REG * modesize.
@@ -5589,6 +5590,9 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 
 #undef TARGET_LEGITIMATE_CONSTANT_P
 #define TARGET_LEGITIMATE_CONSTANT_P ubi32_legitimate_constant_p
+
+#undef TARGET_LRA_P
+#define TARGET_LRA_P hook_bool_void_false
 
 struct gcc_target targetm = TARGET_INITIALIZER;
 
