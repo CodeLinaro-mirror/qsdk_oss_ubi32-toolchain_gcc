@@ -151,7 +151,7 @@
 (include "predicates.md")
 (include "constraints.md")
 
-/* FIXME -- not needed.  */
+;; FIXME -- not needed.  */
 ;; All integer comparison codes.
 (define_code_iterator int_cond [ne eq ge gt le lt geu gtu leu ltu])
 
@@ -990,6 +990,7 @@
    add.4\\t%1, #0, %0
    lsl.4\\t%1, %0, #0")
 
+; FIXME
 ; If we have the movsi_ccwzn pattern above and we're loading an address
 ; register from a data register that was preceded by a move into that data
 ; register then change the order of the loads so that we load the
@@ -1030,29 +1031,30 @@
   "ubi32_match_cc_mode(insn, CCWmode)"
   "add.4\\t%1, #0, %0")
 
+; FIXME -- Causes failure in CSE
 ; Combine isn't very good at merging some types of operations so we
 ; have to make do with a peephole.  It's not as effective but it's better
 ; than doing nothing.
 ;
-(define_peephole2
-  [(set (match_operand:SI 0 "ubi32_data_register_operand" "")
-	(match_operand:SI 1 "nonimmediate_operand" ""))
-   (parallel
-     [(set (match_operand 2 "ubi32_cc_register_operand" "")
-	   (match_operator 3 "ubi32_compare_operator"
-	     [(match_dup 0)
-	      (const_int 0)]))
-      (clobber (match_operand:SI 4 "ubi32_data_register_operand" ""))])]
-  "(GET_MODE (operands[2]) == CCWZNmode
-    || GET_MODE (operands[2]) == CCWZmode)"
-  [(parallel
-     [(set (match_dup 2)
-	   (match_op_dup 3
-	     [(match_dup 1)
-	      (const_int 0)]))
-      (set (match_dup 0)
-	   (match_dup 1))])]
-   "")
+;(define_peephole2
+;  [(set (match_operand:SI 0 "ubi32_data_register_operand" "")
+;	(match_operand:SI 1 "nonimmediate_operand" ""))
+;   (parallel
+;     [(set (match_operand 2 "ubi32_cc_register_operand" "")
+;	   (match_operator 3 "ubi32_compare_operator"
+;	     [(match_dup 0)
+;	      (const_int 0)]))
+;      (clobber (match_operand:SI 4 "ubi32_data_register_operand" ""))])]
+;  "(GET_MODE (operands[2]) == CCWZNmode
+;    || GET_MODE (operands[2]) == CCWZmode)"
+;  [(parallel
+;     [(set (match_dup 2)
+;	   (match_op_dup 3
+;	     [(match_dup 1)
+;	      (const_int 0)]))
+;      (set (match_dup 0)
+;	   (match_dup 1))])]
+;   "")
 
 ; Combine isn't very good at merging some types of operations so we
 ; have to make do with a peephole.  It's not as effective but it's better
@@ -1462,16 +1464,17 @@
   "ubi32_match_cc_mode(insn, CCSZNmode)"
   "ext.1\\t#0, %0")
 
-(define_expand "cmpqi"
-  [(set (reg CC_REGNUM)
-	(compare (match_operand:QI 0 "ubi32_arith_operand" "")
-		 (match_operand:QI 1 "ubi32_compare_operand" "")))]
-  "(ubi32_v4)"
-  "{
-     ubi32_compare_op0 = operands[0];
-     ubi32_compare_op1 = operands[1];
-     DONE;
-   }")
+; FIXME 
+;(define_expand "cmpqi"
+;  [(set (reg CC_REGNUM)
+;	(compare (match_operand:QI 0 "ubi32_arith_operand" "")
+;		 (match_operand:QI 1 "ubi32_compare_operand" "")))]
+;  "(ubi32_v4)"
+;  "{
+;     ubi32_compare_op0 = operands[0];
+;     ubi32_compare_op1 = operands[1];
+;     DONE;
+;   }")
 
 (define_insn "sub1_ccs"
   [(set (reg CC_REGNUM)
@@ -1538,16 +1541,16 @@
 				   const0_rtx);
    }")
 
-(define_expand "cmphi"
-  [(set (reg CC_REGNUM)
-	(compare (match_operand:HI 0 "ubi32_arith_operand" "")
-		 (match_operand:HI 1 "ubi32_compare_operand" "")))]
-  ""
-  "{
-     ubi32_compare_op0 = operands[0];
-     ubi32_compare_op1 = operands[1];
-     DONE;
-   }")
+;(define_expand "cmphi"
+;  [(set (reg CC_REGNUM)
+;	(compare (match_operand:HI 0 "ubi32_arith_operand" "")
+;		 (match_operand:HI 1 "ubi32_compare_operand" "")))]
+;  ""
+;  "{
+;     ubi32_compare_op0 = operands[0];
+;     ubi32_compare_op1 = operands[1];
+;     DONE;
+;   }")
 
 (define_insn "cmphi_cmpi"
   [(set (reg CC_REGNUM)
@@ -1662,16 +1665,16 @@
   "ubi32_match_cc_mode(insn, CCWZmode)"
   "not.4\\t#0, %0")
 
-(define_expand "cmpsi"
-  [(set (reg CC_REGNUM)
-	(compare (match_operand:SI 0 "ubi32_arith_operand" "")
-		 (match_operand:SI 1 "ubi32_compare_operand" "")))]
-  ""
-  "{
-     ubi32_compare_op0 = operands[0];
-     ubi32_compare_op1 = operands[1];
-     DONE;
-   }")
+;(define_expand "cmpsi"
+;  [(set (reg CC_REGNUM)
+;	(compare (match_operand:SI 0 "ubi32_arith_operand" "")
+;		 (match_operand:SI 1 "ubi32_compare_operand" "")))]
+;  ""
+;  "{
+;     ubi32_compare_op0 = operands[0];
+;     ubi32_compare_op1 = operands[1];
+;     DONE;
+;   }")
 
 (define_insn "cmpsi_cmpi"
   [(set (reg CC_REGNUM)
@@ -1879,23 +1882,24 @@
   "TARGET_HARD_FLOAT"
   "fcmpd\t%A0, %A1")
 
+; FIXME -- Remove ubi32_expand_scode
 ; Condition set ops.  We don't actually have any conditional store ops but
 ; we can emulate them.
 ;
-(define_expand "s<code>"
-  [(set (match_operand:SI 0 "nonimmediate_operand" "")
-	(int_cond (reg:CC CC_REGNUM)
-		  (const_int 0)))]
-  ""
-  "{
-     if (!ubi32_expand_scode (<CODE>,
-				 ubi32_compare_op0,
-				 ubi32_compare_op1,
-				 operands))
-       FAIL;
-
-     DONE;
-   }")
+;(define_expand "s<code>"
+;  [(set (match_operand:SI 0 "nonimmediate_operand" "")
+;	(int_cond (reg:CC CC_REGNUM)
+;		  (const_int 0)))]
+;  ""
+;  "{
+;     if (!ubi32_expand_scode (<CODE>,
+;				 ubi32_compare_op0,
+;				 ubi32_compare_op1,
+;				 operands))
+;       FAIL;
+;
+;     DONE;
+;   }")
 
 ; Pattern used to implement the core of the seq emulation.
 ;
@@ -2137,26 +2141,27 @@
    }"
   [(set_attr "length" "16")])
 
+; FIXME -- Ubi32 doesn't have conditional arithmetic
 ; Conditional arithmetic.  We can't do a great deal here but we can do
 ; some things.
 ;
-(define_expand "addsicc"
-  [(match_operand:SI 0 "nonimmediate_operand" "")
-   (match_operand 1 "comparison_operator" "")
-   (match_operand:SI 2 "nonimmediate_operand" "")
-   (match_operand:SI 3 "const_int_operand" "")]
-  ""
-  "{
-     if (!ubi32_expand_addcc (GET_CODE (operands[1]),
-				 ubi32_compare_op0,
-				 ubi32_compare_op1,
-				 operands[0],
-				 operands[2],
-				 operands[3]))
-       FAIL;
-
-     DONE;
-   }")
+;(define_expand "addsicc"
+;  [(match_operand:SI 0 "nonimmediate_operand" "")
+;   (match_operand 1 "comparison_operator" "")
+;   (match_operand:SI 2 "nonimmediate_operand" "")
+;   (match_operand:SI 3 "const_int_operand" "")]
+;  ""
+;  "{
+;     if (!ubi32_expand_addcc (GET_CODE (operands[1]),
+;				 ubi32_compare_op0,  -- Perhaps XEXP (operands[1], 0)
+;				 ubi32_compare_op1,  -- Perhaps XEXP (operands[1], 1)
+;				 operands[0],
+;				 operands[2],
+;				 operands[3]))
+;       FAIL;
+;
+;     DONE;
+;   }")
 
 (define_insn "btst"
   [(set (reg:CCWZ CC_REGNUM)
@@ -4124,18 +4129,18 @@
 
 ; Conditional jump instructions
 ;
-(define_expand "b<code>"
-  [(set (pc)
-	(if_then_else (int_cond (match_dup 1)
-				(const_int 0))
-		      (label_ref (match_operand 0 "" ""))
-		      (pc)))]
-  ""
-  "{
-     operands[1] = ubi32_gen_compare (<CODE>,
-					 ubi32_compare_op0,
-					 ubi32_compare_op1);
-   }")
+;(define_expand "b<code>"
+;  [(set (pc)
+;	(if_then_else (int_cond (match_dup 1)
+;				(const_int 0))
+;		      (label_ref (match_operand 0 "" ""))
+;		      (pc)))]
+;  ""
+;  "{
+;     operands[1] = ubi32_gen_compare (<CODE>,
+;					 ubi32_compare_op0,
+;					 ubi32_compare_op1);
+;   }")
 
 (define_expand "cbranch<NUM:mode>4"
   [(set (pc)
@@ -4146,9 +4151,24 @@
 		      (pc)))]
   ""
 {
-  ubi32_expand_conditional_branch (operands);
+  enum rtx_code code = GET_CODE (operands[0]);
+  rtx op0 = operands[1];
+  rtx op1 = operands[2];
+  rtx label = operands[3];
+  rtx condition;
+
+  rtx cc_reg = ubi32_gen_compare (code, op0, op1);
+  condition = gen_rtx_fmt_ee (code, GET_MODE(cc_reg), cc_reg, const0_rtx);
+  emit_jump_insn (gen_condjump (condition, label));
   DONE;
 })
+
+;; Used to implement built-in functions.
+(define_expand "condjump"
+  [(set (pc)
+	(if_then_else (match_operand 0) 
+		      (label_ref (match_operand 1))
+		      (pc)))])
 
 (define_insn "jcc"
   [(set (pc)
@@ -4158,12 +4178,12 @@
 		      (label_ref (match_operand 0 "" ""))
 		      (pc)))]
 
-  "(GET_MODE (operands[2]) == CCSZNmode
-    || GET_MODE (operands[2]) == CCSZmode
-    || GET_MODE (operands[2]) == CCSmode
-    || GET_MODE (operands[2]) == CCWZNmode
-    || GET_MODE (operands[2]) == CCWZmode
-    || GET_MODE (operands[2]) == CCWmode)"
+  "(GET_MODE (operands[1]) == CCSZNmode
+    || GET_MODE (operands[1]) == CCSZmode
+    || GET_MODE (operands[1]) == CCSmode
+    || GET_MODE (operands[1]) == CCWZNmode
+    || GET_MODE (operands[1]) == CCWZmode
+    || GET_MODE (operands[1]) == CCWmode)"
   "*
    {
      ubi32_output_cond_jump (insn, operands[1], operands[0]);

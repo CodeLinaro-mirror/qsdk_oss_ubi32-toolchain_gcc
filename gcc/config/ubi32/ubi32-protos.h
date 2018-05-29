@@ -47,7 +47,7 @@ extern void ubi32_expand_eh_return (rtx *);
 extern enum machine_mode ubi32_select_cc_mode (RTX_CODE, rtx, rtx);
 extern rtx ubi32_gen_compare (RTX_CODE, rtx, rtx);
 extern int ubi32_shiftable_const_int (int);
-extern rtx ubi32_expand_conditional_branch (rtx *);
+extern void ubi32_expand_conditional_branch (rtx *);
 
 #ifdef TREE_CODE
 extern void ubi32_init_cumulative_args (CUMULATIVE_ARGS *, tree, rtx);

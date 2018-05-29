@@ -5408,6 +5408,7 @@ fi
 # Conditionalize the sfp-machine.h header for this target machine.
 if test -z "${sfp_machine_header}"; then
 	sfp_machine_header=$cpu_type/sfp-machine.h
+	echo "MJE: sfp_machine_header = $sfp_machine_header"
 	if test -f ${srcdir}/config/${sfp_machine_header}; then
 		:
 	else

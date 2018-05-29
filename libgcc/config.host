@@ -193,7 +193,7 @@ tilepro*-*-*)
 	cpu_type=tilepro
 	;;
 ubi32-*-*)
-	cpu_type=bfin
+	cpu_type=ubi32
 	;;
 v850*-*-*)
 	cpu_type=v850
@@ -1321,7 +1321,8 @@ tilepro*-*-linux*)
 	md_unwind_header=tilepro/linux-unwind.h
         ;;
 ubi32-*-elf*)
-	tmake_file="ubi32/t-ubi32"
+	tmake_file="ubi32/t-ubi32 ubi32/t-fprules-softfp t-softfp"
+	extra_parts="$extra_parts crtbegin.o crtend.o crti.o crtn.o"
         ;;
 v850*-*-*)
 	tmake_file="${tmake_file} v850/t-v850 t-fdpbit"

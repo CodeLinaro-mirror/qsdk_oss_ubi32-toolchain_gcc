@@ -75,7 +75,11 @@ extern enum ubi32_processor_type ubi32_arch;
 
 /* Most ubi32 variants are big-endian but v6 switched to
    little-endian.  */
+#ifdef FIXME
 #define BYTES_BIG_ENDIAN (ubi32_big_endian != 0)
+#else
+#define BYTES_BIG_ENDIAN (TARGET_BIG_ENDIAN)
+#endif
 #define WORDS_BIG_ENDIAN BYTES_BIG_ENDIAN
 
 /* Ubi32 has 32 bits per word.  */

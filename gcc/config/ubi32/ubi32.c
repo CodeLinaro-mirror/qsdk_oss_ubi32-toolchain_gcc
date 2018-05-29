@@ -465,7 +465,7 @@ ubi32_print_operand (FILE *file, rtx x, int code)
       {
 	machine_mode mode;
 
-	mode = GET_MODE (XEXP (x, 0));
+	mode = GET_MODE (x);
 
 	/* These are normal and reversed branches.  */
 	switch (code == 'b' ? GET_CODE (x) : reverse_condition (GET_CODE (x)))
@@ -479,7 +479,7 @@ ubi32_print_operand (FILE *file, rtx x, int code)
 	    break;
 
 	  case GE:
-	    if (mode == CCSZNmode || mode == CCWZNmode)
+	    if (mode == E_CCSZNmode || mode == E_CCWZNmode)
 	      fprintf (file, "pl");
 	    else
 	      fprintf (file, "ge");
@@ -494,7 +494,7 @@ ubi32_print_operand (FILE *file, rtx x, int code)
 	    break;
 
 	  case LT:
-	    if (mode == CCSZNmode || mode == CCWZNmode)
+	    if (mode == E_CCSZNmode || mode == E_CCWZNmode)
 	      fprintf (file, "mi");
 	    else
 	      fprintf (file, "lt");
@@ -1004,14 +1004,16 @@ ubi32_legitimize_fdpic_address (rtx orig, rtx reg)
   return new_rtx;
 }
 
-/* FIXME -- merge with ubi32_gen_compare. */
-rtx
+void
 ubi32_expand_conditional_branch (rtx *operands)
 {
   enum rtx_code code = GET_CODE (operands[0]);
   rtx x = operands[1];
   rtx y = operands[2];
-  return ubi32_gen_compare (code, x, y);
+  rtx label = operands[3];
+  rtx condition = gen_rtx_fmt_ee (code, VOIDmode, x, y);
+  emit_jump_insn (gen_condjump (condition, label));
+
 }
 
 /* X and Y are two things to compare using CODE.  Emit the compare insn and
@@ -2267,7 +2269,7 @@ ubi32_emit_move_const_int (rtx dest, rtx imm)
 	      rtx low_hword_mem;
 	      rtx low_hword_addr;
 
-	      low_hword_addr = plus_constant (GET_MODE (dest), XEXP (dest, 0), 2);
+	      low_hword_addr = plus_constant (SImode, XEXP (dest, 0), 2);
 	      if (ubi32_legitimate_address_p (HImode, low_hword_addr, 1))
 		{
 		  low_hword_mem = gen_rtx_MEM (HImode, low_hword_addr);
@@ -2283,7 +2285,7 @@ ubi32_emit_move_const_int (rtx dest, rtx imm)
 	      rtx high_hword_mem;
 	      rtx high_hword_addr;
 
-	      high_hword_addr = plus_constant (GET_MODE (dest), XEXP (dest, 0), 2);
+	      high_hword_addr = plus_constant (SImode, XEXP (dest, 0), 2);
 	      if (ubi32_legitimate_address_p (HImode, high_hword_addr, 1))
 		{
 		  high_hword_mem = gen_rtx_MEM (HImode, high_hword_addr);
@@ -4430,17 +4432,21 @@ ubi32_output_cond_jump (rtx insn, rtx cond, rtx target)
   rtx note;
   int mostly_false_jump;
   rtx xoperands[2];
-  rtx cc_reg;
+  //rtx cc_reg;
   machine_mode cc_mode;
 
-  note = find_reg_note (insn, REG_BR_PROB, 0);
+#ifdef FIXME
+  note = find_reg_note (insn, REVOIDmodeG_BR_PROB, 0);
   mostly_false_jump = !note || (INTVAL (XEXP (note, 0))
 				<= REG_BR_PROB_BASE / 2);
+#else
+  mostly_false_jump = 0;
+#endif
 
   xoperands[0] = target;
   xoperands[1] = cond;
-  cc_reg = XEXP (cond, 0);
-  cc_mode = GET_MODE (cc_reg);
+  //cc_reg = XEXP (cond, 0);
+  cc_mode = GET_MODE (cond);
 
   if (cc_mode == E_CCWmode
       || cc_mode == E_CCWZmode

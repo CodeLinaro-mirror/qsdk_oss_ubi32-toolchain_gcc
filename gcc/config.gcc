@@ -3032,7 +3032,7 @@ tilepro*-*-linux*)
 	;;
 ubi32-*-elf)
 	tm_file="${tm_file} dbxelf.h elfos.h ubi32/elf.h newlib-stdint.h"
-	tmake_file="ubi32/t-ubi32-elf ubi32/t-fprules-softfp soft-fp/t-softfp"
+	tmake_file="ubi32/t-ubi32-elf"
 	c_target_objs="ubi32-c.o"
 	cxx_target_objs="ubi32-c.o"
 	gnu_ld=yes

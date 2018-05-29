@@ -22,6 +22,8 @@
 #define _FP_NANSIGN_Q		0
 
 #define _FP_KEEPNANFRACP 1
+#define _FP_QNANNEGATEDP 0
+#define _FP_TININESS_AFTER_ROUNDING 0
 
 /* Someone please check this.  */
 #define _FP_CHOOSENAN(fs, wc, R, X, Y, OP)			\
@@ -43,7 +45,7 @@
 #define	__LITTLE_ENDIAN	1234
 #define	__BIG_ENDIAN	4321
 
-#if defined(__UBICOM32_BIG_ENDIAN__)
+#if defined(__UBI32_BIG_ENDIAN__)
 #define __BYTE_ORDER __BIG_ENDIAN
 #else
 #define __BYTE_ORDER __LITTLE_ENDIAN
