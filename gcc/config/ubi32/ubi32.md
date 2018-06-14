@@ -177,49 +177,51 @@
   "ubi32_match_cc_mode(insn, CCSZNmode)"
   "ext.1\\t%1, %0")
 
+; FIXME
 ; Combine isn't very good at merging some types of operations so we
 ; have to make do with a peephole.  It's not as effective but it's better
 ; than doing nothing.
 ;
-(define_peephole2
-  [(set (match_operand:QI 0 "nonimmediate_operand" "")
-	(match_operand:QI 1 "nonimmediate_operand" ""))
-   (set (match_operand 2 "ubi32_cc_register_operand" "")
-	(match_operator 3 "ubi32_compare_operator"
-	  [(match_dup 0)
-	   (const_int 0)]))]
-  "(GET_MODE (operands[2]) == CCSZNmode
-    || GET_MODE (operands[2]) == CCSZmode)"
-  [(parallel
-     [(set (match_dup 2)
-	   (match_op_dup 3
-	     [(match_dup 1)
-	      (const_int 0)]))
-      (set (match_dup 0)
-	   (match_dup 1))])]
-   "")
+;(define_peephole2
+;  [(set (match_operand:QI 0 "nonimmediate_operand" "")
+;	(match_operand:QI 1 "nonimmediate_operand" ""))
+;   (set (match_operand 2 "ubi32_cc_register_operand" "")
+;	(match_operator 3 "ubi32_compare_operator"
+;	  [(match_dup 0)
+;	   (const_int 0)]))]
+;  "(GET_MODE (operands[2]) == CCSZNmode
+;    || GET_MODE (operands[2]) == CCSZmode)"
+;  [(parallel
+;     [(set (match_dup 2)
+;	   (match_op_dup 3
+;	     [(match_dup 1)
+;	      (const_int 0)]))
+;      (set (match_dup 0)
+;	   (match_dup 1))])]
+;   "")
 
+; FIXME
 ; Combine isn't very good at merging some types of operations so we
 ; have to make do with a peephole.  It's not as effective but it's better
 ; than doing nothing.
 ;
-(define_peephole2
-  [(set (match_operand:QI 0 "nonimmediate_operand" "")
-	(match_operand:QI 1 "nonimmediate_operand" ""))
-   (set (match_operand 2 "ubi32_cc_register_operand" "")
-	(match_operator 3 "ubi32_compare_operator"
-	  [(match_dup 1)
-	   (const_int 0)]))]
-  "(GET_MODE (operands[2]) == CCSZNmode
-    || GET_MODE (operands[2]) == CCSZmode)"
-  [(parallel
-     [(set (match_dup 2)
-	   (match_op_dup 3
-	     [(match_dup 1)
-	      (const_int 0)]))
-      (set (match_dup 0)
-	   (match_dup 1))])]
-   "")
+;(define_peephole2
+;  [(set (match_operand:QI 0 "nonimmediate_operand" "")
+;	(match_operand:QI 1 "nonimmediate_operand" ""))
+;   (set (match_operand 2 "ubi32_cc_register_operand" "")
+;	(match_operator 3 "ubi32_compare_operator"
+;	  [(match_dup 1)
+;	   (const_int 0)]))]
+;  "(GET_MODE (operands[2]) == CCSZNmode
+;    || GET_MODE (operands[2]) == CCSZmode)"
+;  [(parallel
+;     [(set (match_dup 2)
+;	   (match_op_dup 3
+;	     [(match_dup 1)
+;	      (const_int 0)]))
+;      (set (match_dup 0)
+;	   (match_dup 1))])]
+;   "")
 
 ; 16-bit move with no change to the flags reg.
 ;
@@ -242,49 +244,51 @@
   "ubi32_match_cc_mode(insn, CCSZNmode)"
   "ext.2\\t%1, %0")
 
+; FIXME
 ; Combine isn't very good at merging some types of operations so we
 ; have to make do with a peephole.  It's not as effective but it's better
 ; than doing nothing.
 ;
-(define_peephole2
-  [(set (match_operand:HI 0 "nonimmediate_operand" "")
-	(match_operand:HI 1 "nonimmediate_operand" ""))
-   (set (match_operand 2 "ubi32_cc_register_operand" "")
-	(match_operator 3 "ubi32_compare_operator"
-	  [(match_dup 0)
-	   (const_int 0)]))]
-  "(GET_MODE (operands[2]) == CCSZNmode
-    || GET_MODE (operands[2]) == CCSZmode)"
-  [(parallel
-     [(set (match_dup 2)
-	   (match_op_dup 3
-	     [(match_dup 1)
-	      (const_int 0)]))
-      (set (match_dup 0)
-	   (match_dup 1))])]
-   "")
+;(define_peephole2
+;  [(set (match_operand:HI 0 "nonimmediate_operand" "")
+;	(match_operand:HI 1 "nonimmediate_operand" ""))
+;   (set (match_operand 2 "ubi32_cc_register_operand" "")
+;	(match_operator 3 "ubi32_compare_operator"
+;	  [(match_dup 0)
+;	   (const_int 0)]))]
+;  "(GET_MODE (operands[2]) == CCSZNmode
+;    || GET_MODE (operands[2]) == CCSZmode)"
+;  [(parallel
+;     [(set (match_dup 2)
+;	   (match_op_dup 3
+;	     [(match_dup 1)
+;	      (const_int 0)]))
+;      (set (match_dup 0)
+;	   (match_dup 1))])]
+;   "")
 
+; FIXME 
 ; Combine isn't very good at merging some types of operations so we
 ; have to make do with a peephole.  It's not as effective but it's better
 ; than doing nothing.
 ;
-(define_peephole2
-  [(set (match_operand:HI 0 "nonimmediate_operand" "")
-	(match_operand:HI 1 "nonimmediate_operand" ""))
-   (set (match_operand 2 "ubi32_cc_register_operand" "")
-	(match_operator 3 "ubi32_compare_operator"
-	  [(match_dup 1)
-	   (const_int 0)]))]
-  "(GET_MODE (operands[2]) == CCSZNmode
-    || GET_MODE (operands[2]) == CCSZmode)"
-  [(parallel
-     [(set (match_dup 2)
-	   (match_op_dup 3
-	     [(match_dup 1)
-	      (const_int 0)]))
-      (set (match_dup 0)
-	   (match_dup 1))])]
-   "")
+;(define_peephole2
+;  [(set (match_operand:HI 0 "nonimmediate_operand" "")
+;	(match_operand:HI 1 "nonimmediate_operand" ""))
+;   (set (match_operand 2 "ubi32_cc_register_operand" "")
+;	(match_operator 3 "ubi32_compare_operator"
+;	  [(match_dup 1)
+;	   (const_int 0)]))]
+;  "(GET_MODE (operands[2]) == CCSZNmode
+;    || GET_MODE (operands[2]) == CCSZmode)"
+;  [(parallel
+;     [(set (match_dup 2)
+;	   (match_op_dup 3
+;	     [(match_dup 1)
+;	      (const_int 0)]))
+;      (set (match_dup 0)
+;	   (match_dup 1))])]
+;   "")
 
 ; 32-bit move with no change to the flags reg.
 ;
@@ -997,28 +1001,28 @@
 ; address register in the first instruction to improve the chances of
 ; avoiding an An hazard.
 ;
-(define_peephole2
-  [(set (match_operand:SI 0 "ubi32_data_register_operand" "")
-	(match_operand:SI 1 "nonimmediate_operand" ""))
-   (parallel
-     [(set (match_operand 2 "ubi32_cc_register_operand" "")
-	   (match_operator 3 "ubi32_compare_operator"
-	     [(match_dup 0)
-	      (const_int 0)]))
-      (set (match_operand:SI 4 "ubi32_address_register_operand" "")
-	   (match_dup 0))])]
-  "(peep2_reg_dead_p (2, operands[0])
-    && (GET_MODE (operands[2]) == CCWZNmode
-	|| GET_MODE (operands[2]) == CCWZmode))"
-  [(set (match_dup 4)
-	(match_dup 1))
-   (parallel
-     [(set (match_dup 2)
-	   (match_op_dup 3
-	     [(match_dup 4)
-	      (const_int 0)]))
-      (clobber (match_dup 0))])]
-   "")
+;(define_peephole2
+;  [(set (match_operand:SI 0 "ubi32_data_register_operand" "")
+;	(match_operand:SI 1 "nonimmediate_operand" ""))
+;   (parallel
+;     [(set (match_operand 2 "ubi32_cc_register_operand" "")
+;	   (match_operator 3 "ubi32_compare_operator"
+;	     [(match_dup 0)
+;	      (const_int 0)]))
+;      (set (match_operand:SI 4 "ubi32_address_register_operand" "")
+;	   (match_dup 0))])]
+;  "(peep2_reg_dead_p (2, operands[0])
+;    && (GET_MODE (operands[2]) == CCWZNmode
+;	|| GET_MODE (operands[2]) == CCWZmode))"
+;  [(set (match_dup 4)
+;	(match_dup 1))
+;   (parallel
+;     [(set (match_dup 2)
+;	   (match_op_dup 3
+;	     [(match_dup 4)
+;	      (const_int 0)]))
+;      (clobber (match_dup 0))])]
+;   "")
 
 ; Combiner-generated 32-bit move with all flags set accordingly.
 ;
@@ -1060,74 +1064,74 @@
 ; have to make do with a peephole.  It's not as effective but it's better
 ; than doing nothing.
 ;
-(define_peephole2
-  [(set (match_operand:SI 0 "nonimmediate_operand" "")
-	(match_operand:SI 1 "ubi32_data_register_operand" ""))
-   (parallel
-     [(set (match_operand 2 "ubi32_cc_register_operand" "")
-	   (match_operator 3 "ubi32_compare_operator"
-	     [(match_dup 1)
-	      (const_int 0)]))
-      (clobber (match_operand:SI 4 "ubi32_data_register_operand" ""))])]
-  "(GET_MODE (operands[2]) == CCWZNmode
-    || GET_MODE (operands[2]) == CCWZmode)"
-  [(parallel
-     [(set (match_dup 2)
-	   (match_op_dup 3
-	     [(match_dup 1)
-	      (const_int 0)]))
-      (set (match_dup 0)
-	   (match_dup 1))])]
-   "")
+;(define_peephole2
+;  [(set (match_operand:SI 0 "nonimmediate_operand" "")
+;	(match_operand:SI 1 "ubi32_data_register_operand" ""))
+;   (parallel
+;     [(set (match_operand 2 "ubi32_cc_register_operand" "")
+;	   (match_operator 3 "ubi32_compare_operator"
+;	     [(match_dup 1)
+;	      (const_int 0)]))
+;      (clobber (match_operand:SI 4 "ubi32_data_register_operand" ""))])]
+;  "(GET_MODE (operands[2]) == CCWZNmode
+;    || GET_MODE (operands[2]) == CCWZmode)"
+;  [(parallel
+;     [(set (match_dup 2)
+;	   (match_op_dup 3
+;	     [(match_dup 1)
+;	      (const_int 0)]))
+;      (set (match_dup 0)
+;	   (match_dup 1))])]
+;   "")
 
 ; Combine isn't very good at merging some types of operations so we
 ; have to make do with a peephole.  It's not as effective but it's better
 ; than doing nothing.
 ;
-(define_peephole2
-  [(set (match_operand:SI 0 "register_operand" "")
-	(match_operand:SI 1 "nonimmediate_operand" ""))
-   (parallel
-     [(set (match_operand 2 "ubi32_cc_register_operand" "")
-	   (match_operator 3 "ubi32_compare_operator"
-	     [(match_dup 0)
-	      (const_int 0)]))
-      (set (match_operand:SI 4 "ubi32_data_register_operand" "")
-	   (match_dup 0))])]
-  "(peep2_reg_dead_p (2, operands[0])
-    && (GET_MODE (operands[2]) == CCWZNmode
-	|| GET_MODE (operands[2]) == CCWZmode))"
-  [(parallel
-     [(set (match_dup 2)
-	   (match_op_dup 3
-	     [(match_dup 1)
-	      (const_int 0)]))
-      (set (match_dup 4)
-	   (match_dup 1))])]
-   "")
+;(define_peephole2
+;  [(set (match_operand:SI 0 "register_operand" "")
+;	(match_operand:SI 1 "nonimmediate_operand" ""))
+;   (parallel
+;     [(set (match_operand 2 "ubi32_cc_register_operand" "")
+;	   (match_operator 3 "ubi32_compare_operator"
+;	     [(match_dup 0)
+;	      (const_int 0)]))
+;      (set (match_operand:SI 4 "ubi32_data_register_operand" "")
+;	   (match_dup 0))])]
+;  "(peep2_reg_dead_p (2, operands[0])
+;    && (GET_MODE (operands[2]) == CCWZNmode
+;	|| GET_MODE (operands[2]) == CCWZmode))"
+;  [(parallel
+;     [(set (match_dup 2)
+;	   (match_op_dup 3
+;	     [(match_dup 1)
+;	      (const_int 0)]))
+;      (set (match_dup 4)
+;	   (match_dup 1))])]
+;   "")
 
 ; Register renaming may make a general reg into a D reg in which case
 ; we may be able to simplify a compare.
 ;
-(define_peephole2
-  [(set (match_operand:SI 0 "register_operand" "")
-	(match_operand:SI 1 "nonimmediate_operand" ""))
-   (parallel
-     [(set (match_operand 2 "ubi32_cc_register_operand" "")
-	   (match_operator 3 "ubi32_compare_operator"
-	     [(match_dup 0)
-	      (const_int 0)]))
-      (clobber (match_operand:SI 4 "ubi32_data_register_operand" ""))])]
-  "(peep2_reg_dead_p (2, operands[0])
-    && (GET_MODE (operands[2]) == CCWZNmode
-	|| GET_MODE (operands[2]) == CCWZmode))"
-  [(parallel
-     [(set (match_dup 2)
-	   (match_op_dup 3
-	     [(match_dup 1)
-	      (const_int 0)]))
-      (clobber (match_dup 4))])]
-   "")
+;(define_peephole2
+;  [(set (match_operand:SI 0 "register_operand" "")
+;	(match_operand:SI 1 "nonimmediate_operand" ""))
+;   (parallel
+;     [(set (match_operand 2 "ubi32_cc_register_operand" "")
+;	   (match_operator 3 "ubi32_compare_operator"
+;	     [(match_dup 0)
+;	      (const_int 0)]))
+;      (clobber (match_operand:SI 4 "ubi32_data_register_operand" ""))])]
+;  "(peep2_reg_dead_p (2, operands[0])
+;    && (GET_MODE (operands[2]) == CCWZNmode
+;	|| GET_MODE (operands[2]) == CCWZmode))"
+;  [(parallel
+;     [(set (match_dup 2)
+;	   (match_op_dup 3
+;	     [(match_dup 1)
+;	      (const_int 0)]))
+;      (clobber (match_dup 4))])]
+;   "")
 
 (define_insn_and_split "movdi"
   [(set (match_operand:DI 0 "nonimmediate_operand" "=r,rm")
@@ -1782,16 +1786,17 @@
    }"
   [(set_attr "length" "4,8")])
 
-(define_expand "cmpdi"
-  [(set (reg CC_REGNUM)
-	(compare (match_operand:DI 0 "ubi32_arith_operand" "")
-		 (match_operand:DI 1 "ubi32_compare_operand" "")))]
-  ""
-  "{
-     ubi32_compare_op0 = operands[0];
-     ubi32_compare_op1 = operands[1];
-     DONE;
-   }")
+;FIXME
+;(define_expand "cmpdi"
+;  [(set (reg CC_REGNUM)
+;	(compare (match_operand:DI 0 "ubi32_arith_operand" "")
+;		 (match_operand:DI 1 "ubi32_compare_operand" "")))]
+;  ""
+;  "{
+;     ubi32_compare_op0 = operands[0];
+;     ubi32_compare_op1 = operands[1];
+;     DONE;
+;   }")
 
 (define_insn "cmpdi_sub4subc"
   [(set (reg CC_REGNUM)
@@ -1846,16 +1851,17 @@
 				   const0_rtx);
    }")
 
-(define_expand "cmpsf"
-  [(set (reg CC_REGNUM)
-        (compare (match_operand:SF 0 "ubi32_arith_operand" "")
-                 (match_operand:SF 1 "register_operand" "")))]
-  "TARGET_HARD_FLOAT"
-  "{
-     ubi32_compare_op0 = operands[0];
-     ubi32_compare_op1 = operands[1];
-     DONE;
-   }")
+;FIXME
+;(define_expand "cmpsf"
+;  [(set (reg CC_REGNUM)
+;        (compare (match_operand:SF 0 "ubi32_arith_operand" "")
+;                 (match_operand:SF 1 "register_operand" "")))]
+;  "TARGET_HARD_FLOAT"
+;  "{
+;     ubi32_compare_op0 = operands[0];
+;     ubi32_compare_op1 = operands[1];
+;     DONE;
+;   }")
 
 (define_insn "cmpsf_fcmps"
   [(set (reg CC_REGNUM)
@@ -1864,16 +1870,17 @@
   "TARGET_HARD_FLOAT"
   "fcmps\t%0, %1")
 
-(define_expand "cmpdf"
-  [(set (reg CC_REGNUM)
-        (compare (match_operand:DF 0 "ubi32_dbl_acc_register_operand" "")
-                 (match_operand:DF 1 "ubi32_dbl_acc_register_operand" "")))]
-  "TARGET_HARD_FLOAT"
-  "{
-     ubi32_compare_op0 = operands[0];
-     ubi32_compare_op1 = operands[1];
-     DONE;
-   }") 
+;FIXME
+;(define_expand "cmpdf"
+;  [(set (reg CC_REGNUM)
+;        (compare (match_operand:DF 0 "ubi32_dbl_acc_register_operand" "")
+;                 (match_operand:DF 1 "ubi32_dbl_acc_register_operand" "")))]
+;  "TARGET_HARD_FLOAT"
+;  "{
+;     ubi32_compare_op0 = operands[0];
+;     ubi32_compare_op1 = operands[1];
+;     DONE;
+;   }")
 
 (define_insn "cmpdf_fcmpd"
   [(set (reg CC_REGNUM)
@@ -2997,39 +3004,41 @@
    mulu.4\\t%A0, %1, %2"
   [(set_attr "type" "mul,mul")])
 
-(define_peephole2
-  [(set (match_operand:SI 0 "register_operand" "")
-	(match_operand:SI 1 "nonimmediate_operand" ""))
-   (set (match_operand:DI 2 "ubi32_acc_hi_register_operand" "")
-	(mult:DI
-	  (zero_extend:DI (match_dup 0))
-	  (zero_extend:DI (match_operand:SI 3 "ubi32_data_register_operand" ""))))]
-  "(peep2_reg_dead_p (2, operands[0])
-    || REGNO (operands[0]) == REGNO (operands[2])
-    || REGNO (operands[0]) == REGNO (operands[2]) + 1)
-   && ! rtx_equal_p (operands[0], operands[3])"
-  [(set (match_dup 2)
-	(mult:DI
-	  (zero_extend:DI (match_dup 1))
-	  (zero_extend:DI (match_dup 3))))]
-  "")
+;FIXME
+;(define_peephole2
+;  [(set (match_operand:SI 0 "register_operand" "")
+;	(match_operand:SI 1 "nonimmediate_operand" ""))
+;   (set (match_operand:DI 2 "ubi32_acc_hi_register_operand" "")
+;	(mult:DI
+;	  (zero_extend:DI (match_dup 0))
+;	  (zero_extend:DI (match_operand:SI 3 "ubi32_data_register_operand" ""))))]
+;  "(peep2_reg_dead_p (2, operands[0])
+;    || REGNO (operands[0]) == REGNO (operands[2])
+;    || REGNO (operands[0]) == REGNO (operands[2]) + 1)
+;   && ! rtx_equal_p (operands[0], operands[3])"
+;  [(set (match_dup 2)
+;	(mult:DI
+;	  (zero_extend:DI (match_dup 1))
+;	  (zero_extend:DI (match_dup 3))))]
+;  "")
 
-(define_peephole2
-  [(set (match_operand:SI 0 "register_operand" "")
-	(match_operand:SI 1 "nonimmediate_operand" ""))
-   (set (match_operand:DI 2 "ubi32_acc_hi_register_operand" "")
-	(mult:DI
-	  (zero_extend:DI (match_operand:SI 3 "ubi32_data_register_operand" ""))
-	  (zero_extend:DI (match_dup 0))))]
-  "(peep2_reg_dead_p (2, operands[0])
-    || REGNO (operands[0]) == REGNO (operands[2])
-    || REGNO (operands[0]) == REGNO (operands[2]) + 1)
-   && ! rtx_equal_p (operands[0], operands[3])"
-  [(set (match_dup 2)
-	(mult:DI
-	  (zero_extend:DI (match_dup 1))
-	  (zero_extend:DI (match_dup 3))))]
-  "")
+;FIXME
+;(define_peephole2
+;  [(set (match_operand:SI 0 "register_operand" "")
+;	(match_operand:SI 1 "nonimmediate_operand" ""))
+;   (set (match_operand:DI 2 "ubi32_acc_hi_register_operand" "")
+;	(mult:DI
+;	  (zero_extend:DI (match_operand:SI 3 "ubi32_data_register_operand" ""))
+;	  (zero_extend:DI (match_dup 0))))]
+;  "(peep2_reg_dead_p (2, operands[0])
+;    || REGNO (operands[0]) == REGNO (operands[2])
+;    || REGNO (operands[0]) == REGNO (operands[2]) + 1)
+;   && ! rtx_equal_p (operands[0], operands[3])"
+;  [(set (match_dup 2)
+;	(mult:DI
+;	  (zero_extend:DI (match_dup 1))
+;	  (zero_extend:DI (match_dup 3))))]
+;  "")
 
 (define_insn "umulsidi3_const"
   [(set (match_operand:DI 0 "ubi32_acc_hi_register_operand"		       "=h")
@@ -3051,39 +3060,41 @@
    muls.4\\t%A0, %1, %2"
   [(set_attr "type" "mul,mul")])
 
-(define_peephole2
-  [(set (match_operand:SI 0 "register_operand" "")
-	(match_operand:SI 1 "nonimmediate_operand" ""))
-   (set (match_operand:DI 2 "ubi32_acc_hi_register_operand" "")
-	(mult:DI
-	  (sign_extend:DI (match_dup 0))
-	  (sign_extend:DI (match_operand:SI 3 "ubi32_data_register_operand" ""))))]
-  "(peep2_reg_dead_p (2, operands[0])
-    || REGNO (operands[0]) == REGNO (operands[2])
-    || REGNO (operands[0]) == REGNO (operands[2]) + 1)
-   && ! rtx_equal_p (operands[0], operands[3])"
-  [(set (match_dup 2)
-	(mult:DI
-	  (sign_extend:DI (match_dup 1))
-	  (sign_extend:DI (match_dup 3))))]
-  "")
+;FIXME
+;(define_peephole2
+;  [(set (match_operand:SI 0 "register_operand" "")
+;	(match_operand:SI 1 "nonimmediate_operand" ""))
+;   (set (match_operand:DI 2 "ubi32_acc_hi_register_operand" "")
+;	(mult:DI
+;	  (sign_extend:DI (match_dup 0))
+;	  (sign_extend:DI (match_operand:SI 3 "ubi32_data_register_operand" ""))))]
+;  "(peep2_reg_dead_p (2, operands[0])
+;    || REGNO (operands[0]) == REGNO (operands[2])
+;    || REGNO (operands[0]) == REGNO (operands[2]) + 1)
+;   && ! rtx_equal_p (operands[0], operands[3])"
+;  [(set (match_dup 2)
+;	(mult:DI
+;	  (sign_extend:DI (match_dup 1))
+;	  (sign_extend:DI (match_dup 3))))]
+;  "")
 
-(define_peephole2
-  [(set (match_operand:SI 0 "register_operand" "")
-	(match_operand:SI 1 "nonimmediate_operand" ""))
-   (set (match_operand:DI 2 "ubi32_acc_hi_register_operand" "")
-	(mult:DI
-	  (sign_extend:DI (match_operand:SI 3 "ubi32_data_register_operand" ""))
-	  (sign_extend:DI (match_dup 0))))]
-  "(peep2_reg_dead_p (2, operands[0])
-    || REGNO (operands[0]) == REGNO (operands[2])
-    || REGNO (operands[0]) == REGNO (operands[2]) + 1)
-   && ! rtx_equal_p (operands[0], operands[3])"
-  [(set (match_dup 2)
-	(mult:DI
-	  (sign_extend:DI (match_dup 1))
-	  (sign_extend:DI (match_dup 3))))]
-  "")
+;FIXME
+;(define_peephole2
+;  [(set (match_operand:SI 0 "register_operand" "")
+;	(match_operand:SI 1 "nonimmediate_operand" ""))
+;   (set (match_operand:DI 2 "ubi32_acc_hi_register_operand" "")
+;	(mult:DI
+;	  (sign_extend:DI (match_operand:SI 3 "ubi32_data_register_operand" ""))
+;	  (sign_extend:DI (match_dup 0))))]
+;  "(peep2_reg_dead_p (2, operands[0])
+;    || REGNO (operands[0]) == REGNO (operands[2])
+;    || REGNO (operands[0]) == REGNO (operands[2]) + 1)
+;   && ! rtx_equal_p (operands[0], operands[3])"
+;  [(set (match_dup 2)
+;	(mult:DI
+;	  (sign_extend:DI (match_dup 1))
+;	  (sign_extend:DI (match_dup 3))))]
+;  "")
 
 (define_insn "mulsidi3_const"
   [(set (match_operand:DI 0 "ubi32_acc_hi_register_operand"		       "=h")
@@ -4166,7 +4177,7 @@
 ;; Used to implement built-in functions.
 (define_expand "condjump"
   [(set (pc)
-	(if_then_else (match_operand 0) 
+	(if_then_else (match_operand 0)
 		      (label_ref (match_operand 1))
 		      (pc)))])
 

@@ -100,8 +100,8 @@ static bool ubi32_cannot_force_const_mem (machine_mode, rtx x);
 static unsigned char ubi32_function_ok_for_sibcall (tree decl, tree exp);
 static int ubi32_multiply_dep_p (rtx, rtx);
 static int ubi32_fpu_dep_p (rtx, rtx);
-static bool ubi32_handle_option (size_t, const char *, int);
 #endif
+static void ubi32_option_override (void);
 
 /* Nonzero if this chip supports the Ubi32 v3 ISA.  */
 int ubi32_v3 = 1;
@@ -205,13 +205,8 @@ enum reg_class const ubi32_regclass_map[FIRST_PSEUDO_REGISTER] =
   ADDRESS_REGS,		/* 39 - sfp  */
 };
 
-rtx ubi32_compare_op0;
-rtx ubi32_compare_op1;
-
-/* Handle command line option overrides.  */
-
-void
-ubi32_override_options (void)
+static void
+ubi32_option_override (void)
 {
   flag_pic = 0;
 
@@ -297,6 +292,7 @@ ubi32_override_options (void)
   if (TARGET_LITTLE_ENDIAN)
     ubi32_big_endian = 0;
 
+#ifdef FIXME
   if (ubi32_big_endian == 0)
     {
       ubi32_acc0_hi_regnum = 25;
@@ -304,6 +300,7 @@ ubi32_override_options (void)
       ubi32_acc1_hi_regnum = 27;
       ubi32_acc1_lo_regnum = 26;
     }
+#endif
 
   /*  Only ubicom32v5 can have HARD_FLOAT.  */
   if (TARGET_HARD_FLOAT && ((ubi32_v6 || ubi32_v61) || !ubi32_v5)) 
@@ -1102,14 +1099,15 @@ ubi32_split_operand_pair (rtx operands[6])
   switch (GET_CODE (operands[1]))
     {
     case REG:
-      if (!ubi32_big_endian && (REGNO(operands[1]) == ubi32_acc0_hi_regnum
-				   || REGNO(operands[1]) == ubi32_acc1_hi_regnum))
+#if 1
+      if (!ubi32_big_endian)
         {
 	  /* For little-endian, switch order of ACC regs.  */
           operands[4] = gen_rtx_REG (SImode, REGNO (operands[1]) + 1);
           operands[5] = gen_rtx_REG (SImode, REGNO (operands[1]));
         } 
       else
+#endif
         {
           operands[5] = gen_rtx_REG (SImode, REGNO (operands[1]) + 1);
           operands[4] = gen_rtx_REG (SImode, REGNO (operands[1]));
@@ -1133,8 +1131,7 @@ ubi32_split_operand_pair (rtx operands[6])
   switch (GET_CODE (operands[0]))
     {
     case REG:
-      if (!ubi32_big_endian && (REGNO(operands[0]) == ubi32_acc0_hi_regnum
-				   || REGNO(operands[0]) == ubi32_acc1_hi_regnum))
+      if (!ubi32_big_endian)
         {
           operands[2] = gen_rtx_REG (SImode, REGNO (operands[0]) + 1);
           operands[3] = gen_rtx_REG (SImode, REGNO (operands[0]));
@@ -1154,6 +1151,7 @@ ubi32_split_operand_pair (rtx operands[6])
     }
 }
 
+#ifdef FIXME
 static void
 ubi32_gen_lshrsi3 (rtx op0, rtx op1, rtx op2)
 {
@@ -1170,6 +1168,7 @@ ubi32_gen_lshrsi3 (rtx op0, rtx op1, rtx op2)
       emit_move_insn (op0, scratch);
     }
 }
+#endif
 
 static void
 ubi32_gen_addsi3_ccwzn_null (rtx src1, rtx src2)
@@ -1467,6 +1466,7 @@ ubi32_expand_mulhisi3 (rtx *operands)
   return 1;
 }
 
+#ifdef FIXME /* Remove */
 static bool
 ubi32_expand_seq (rtx cmp_op0, rtx cmp_op1, rtx *operands)
 {
@@ -1895,6 +1895,7 @@ ubi32_expand_scode (enum rtx_code code, rtx cmp_op0, rtx cmp_op1, rtx *operands)
       return false;
     }
 }
+#endif /* FIXME -- remove */
 
 static bool
 ubi32_expand_addeq (rtx cmp_op0, rtx cmp_op1,
@@ -2533,12 +2534,24 @@ ubi32_expand_prologue_1 (int adj)
 static void
 ubi32_expand_prologue_2 (int adj)
 {
-  rtx x;
+  rtx x, adjrtx;
   int i;
+
+  /* Generate stack adjustment which will not be split. */
+  if (adj <= 131071)
+    {
+      adjrtx = GEN_INT (-(adj + save_regs_size));
+    }
+  else
+    {
+      adjrtx = gen_rtx_REG (SImode, AUX_DATA_REGNUM);
+      x = emit_move_insn (adjrtx, GEN_INT (-(adj + save_regs_size)));
+      RTX_FRAME_RELATED_P (x) = 1;
+    }
 
   x = gen_addsi3 (stack_pointer_rtx,
 		  stack_pointer_rtx,
-		  GEN_INT (-(adj + save_regs_size)));
+		  adjrtx);
   x = emit_insn (x);
   RTX_FRAME_RELATED_P (x) = 1;
 
@@ -3077,17 +3090,20 @@ ubi32_function_arg (cumulative_args_t cum_v, machine_mode mode,
   return result;
 }
 
-#ifdef FIXME
 rtx
-ubi32_function_incoming_arg (CUMULATIVE_ARGS *cum, machine_mode mode,
-			        tree type, int named ATTRIBUTE_UNUSED)
+ubi32_function_incoming_arg (cumulative_args_t cum_v, machine_mode mode,
+			        const_tree type, bool named ATTRIBUTE_UNUSED)
 {
+  /* For naked functions don't save args on stack.  */
+  if (ubi32_naked_function_p ())
+    return NULL_RTX;
+
+  /* For stdarg functions, all regs are stored in prologue.  */
   if (cfun->stdarg)
     return NULL_RTX;
 
-  return ubi32_function_arg (cum, mode, type, named);
+  return ubi32_function_arg (cum_v, mode, type, named);
 }
-#endif
 
 /* Implement hook TARGET_ARG_PARTIAL_BYTES.
 
@@ -4427,16 +4443,18 @@ ubi32_machine_dependent_reorg (void)
 #endif
 
 void
-ubi32_output_cond_jump (rtx insn, rtx cond, rtx target)
+ubi32_output_cond_jump (rtx insn ATTRIBUTE_UNUSED, rtx cond, rtx target)
 {
+#ifdef FIXME
   rtx note;
+#endif
   int mostly_false_jump;
   rtx xoperands[2];
   //rtx cc_reg;
   machine_mode cc_mode;
 
 #ifdef FIXME
-  note = find_reg_note (insn, REVOIDmodeG_BR_PROB, 0);
+  note = find_reg_note (insn, REG_BR_PROB, 0);
   mostly_false_jump = !note || (INTVAL (XEXP (note, 0))
 				<= REG_BR_PROB_BASE / 2);
 #else
@@ -5554,6 +5572,9 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 #undef TARGET_FUNCTION_ARG
 #define TARGET_FUNCTION_ARG ubi32_function_arg
 
+#undef TARGET_FUNCTION_INCOMING_ARG
+#define TARGET_FUNCTION_INCOMING_ARG ubi32_function_incoming_arg
+
 #undef TARGET_FUNCTION_ARG_ADVANCE
 #define TARGET_FUNCTION_ARG_ADVANCE ubi32_function_arg_advance
 
@@ -5578,7 +5599,7 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 
 #undef TARGET_FOLD_BUILTIN
 #define TARGET_FOLD_BUILTIN ubi32_fold_builtin
-#endif
+#endif /* FIXME */
 
 #undef TARGET_CANNOT_FORCE_CONST_MEM
 #define TARGET_CANNOT_FORCE_CONST_MEM ubi32_cannot_force_const_mem
@@ -5586,10 +5607,8 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 #undef TARGET_MAX_ANCHOR_OFFSET
 #define TARGET_MAX_ANCHOR_OFFSET 0x1ff
 
-#ifdef FIXME
-#undef TARGET_HANDLE_OPTION
-#define TARGET_HANDLE_OPTION ubi32_handle_option
-#endif
+#undef  TARGET_OPTION_OVERRIDE
+#define TARGET_OPTION_OVERRIDE ubi32_option_override
 
 #undef TARGET_LEGITIMIZE_ADDRESS
 #define TARGET_LEGITIMIZE_ADDRESS ubi32_legitimize_address

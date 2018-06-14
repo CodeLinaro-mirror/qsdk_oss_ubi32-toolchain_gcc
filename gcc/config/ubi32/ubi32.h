@@ -82,6 +82,10 @@ extern enum ubi32_processor_type ubi32_arch;
 #endif
 #define WORDS_BIG_ENDIAN BYTES_BIG_ENDIAN
 
+/* Define order of value in double-word registers.
+   Most significant word is in lower numbered register.  */
+#define REG_WORDS_BIG_ENDIAN 1
+
 /* Ubi32 has 32 bits per word.  */
 #define BITS_PER_WORD 32
 
@@ -282,7 +286,9 @@ extern enum ubi32_processor_type ubi32_arch;
   {								\
     {"a7", 23},							\
     {"mac_hi", 24},						\
-    {"mac_lo", 25}						\
+    {"mac_lo", 25},						\
+    {"acc0", 24},						\
+    {"acc1", 26}						\
   }
 
 /* Order of allocation of registers.  */
@@ -1072,8 +1078,7 @@ typedef struct ubi32_args
 
    Defined in svr4.h.  */
 
-/*#define DWARF2_UNWIND_INFO 1*/
-#define DWARF2_UNWIND_INFO 0
+#define DWARF2_UNWIND_INFO 1
 #define INCOMING_RETURN_ADDR_RTX gen_rtx_REG (Pmode, LINK_REGNUM)
 #define INCOMING_FRAME_SP_OFFSET 0
 #define DWARF_FRAME_RETURN_COLUMN DWARF_FRAME_REGNUM (LINK_REGNUM)
@@ -1108,7 +1113,7 @@ typedef struct ubi32_args
    line numbers.  This usually requires extending the assembler to
    support them, and #defining DWARF2_LINE_MIN_INSN_LENGTH in the
    assembler configuration header files.  */
-/* #define DWARF2_ASM_LINE_DEBUG_INFO 1 */
+#define DWARF2_ASM_LINE_DEBUG_INFO 1
 
 
 /* An alias for a machine mode name.  This is the machine mode that elements
@@ -1222,5 +1227,7 @@ enum ubi32_builtins
 
 extern rtx ubi32_compare_op0;
 extern rtx ubi32_compare_op1;
+
+#define STACK_GROWS_DOWNWARD 1
 
 #define FRAME_GROWS_DOWNWARD flag_stack_protect
