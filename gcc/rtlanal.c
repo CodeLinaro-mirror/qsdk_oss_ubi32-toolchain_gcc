@@ -3824,7 +3824,10 @@ subreg_get_info (unsigned int xregno, machine_mode xmode,
 
       if (known_eq (offset, 0U) || nregs_xmode == nregs_ymode)
 	{
-	  info->offset = 0;
+	  if (WORDS_BIG_ENDIAN != REG_WORDS_BIG_ENDIAN)
+	    info->offset = nregs_xmode / nregs_ymode - 1;
+	  else
+	    info->offset = 0;
 	  info->nregs = nregs_ymode;
 	  return;
 	}
