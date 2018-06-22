@@ -2615,22 +2615,6 @@ ubi32_expand_prologue (void)
 
   ubi32_layout_prologue_frame (adj);
 
-  /* If we have a function using stdargs then flush the argument
-     registers to the stack.  */
-  if (cfun->stdarg)
-    {
-      unsigned int regno;
-      for (regno = UBI32_FUNCTION_ARG_REGS - 1; (regno + 1) > 0; --regno)
-	{
-	  rtx mem;
-
-	  mem = gen_rtx_MEM (SImode,
-			     gen_rtx_PRE_DEC (Pmode, stack_pointer_rtx));
-	  x = emit_move_insn (mem, gen_rtx_REG (SImode, regno));
-	  RTX_FRAME_RELATED_P (x) = 1;
-	}
-    }
-
   if (save_regs)
     {
       switch (prologue_epilogue_type)
@@ -2860,9 +2844,6 @@ ubi32_expand_epilogue (bool sibcall)
       adj = 0;
     }
 
-  if (cfun->stdarg)
-    adj += (UBI32_FUNCTION_ARG_REGS * UNITS_PER_WORD);
-
   if (adj)
     {
       x = gen_addsi3 (stack_pointer_rtx, stack_pointer_rtx, GEN_INT (adj));
@@ -3063,7 +3044,6 @@ ubi32_function_arg_advance (cumulative_args_t cum_v, machine_mode mode,
   bytes = (mode == BLKmode) ? int_size_in_bytes (type) : GET_MODE_SIZE (mode);
   words = (bytes + UNITS_PER_WORD - 1) / UNITS_PER_WORD;
 
-/* FIXME -- is this correct for double word args?  */
   cum->nbytes += words * UNITS_PER_WORD;
 }
 
@@ -3077,6 +3057,9 @@ ubi32_function_arg (cumulative_args_t cum_v, machine_mode mode,
   CUMULATIVE_ARGS *cum = get_cumulative_args (cum_v);
   rtx result = 0;
   int nregs = UBI32_FUNCTION_ARG_REGS;
+
+  if (named == false)
+    return 0;
 
   cum->nbytes = (cum->nbytes + 3) & ~3;
 
@@ -3096,10 +3079,6 @@ ubi32_function_incoming_arg (cumulative_args_t cum_v, machine_mode mode,
 {
   /* For naked functions don't save args on stack.  */
   if (ubi32_naked_function_p ())
-    return NULL_RTX;
-
-  /* For stdarg functions, all regs are stored in prologue.  */
-  if (cfun->stdarg)
     return NULL_RTX;
 
   return ubi32_function_arg (cum_v, mode, type, named);
@@ -3145,6 +3124,19 @@ ubi32_arg_partial_bytes (cumulative_args_t pcum_v, machine_mode mode,
 
   /* put diff bytes in regs and rest on stack */
   return diff;
+}
+
+/* Implement hook TARGET_STRICT_ARGUMENT_NAMING.
+
+   Define this hook to return true if the location where a function
+   argument is passed depensd on whether or not it is a nemed argument.
+
+   Always return true so that 'named' passed to function_arg is set
+   for all named arguments.  */
+static bool
+ubi32_strict_argument_naming (cumulative_args_t pcum_v ATTRIBUTE_UNUSED)
+{
+  return true;
 }
 
 static bool
@@ -5580,6 +5572,9 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 
 #undef TARGET_ARG_PARTIAL_BYTES
 #define TARGET_ARG_PARTIAL_BYTES ubi32_arg_partial_bytes
+
+#undef TARGET_STRICT_ARGUMENT_NAMING
+#define TARGET_STRICT_ARGUMENT_NAMING ubi32_strict_argument_naming
 
 #undef TARGET_PASS_BY_REFERENCE
 #define TARGET_PASS_BY_REFERENCE ubi32_pass_by_reference
