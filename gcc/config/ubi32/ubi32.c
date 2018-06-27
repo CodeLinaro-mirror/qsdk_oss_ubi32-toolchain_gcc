@@ -89,11 +89,9 @@ static bool ubi32_callee_copies (CUMULATIVE_ARGS *, machine_mode mode,
 
 static bool ubi32_return_in_memory (const_tree, const_tree);
 static bool ubi32_is_base_reg (rtx, int);
-#ifdef FIXME
 static void ubi32_init_builtins (void);
 static rtx ubi32_expand_builtin (tree, rtx, rtx, machine_mode, int);
-static tree ubi32_fold_builtin (tree, tree, bool);
-#endif
+static tree ubi32_fold_builtin (tree, int, tree *, bool);
 static int ubi32_get_valid_offset_mask (machine_mode);
 static bool ubi32_cannot_force_const_mem (machine_mode, rtx x);
 #ifdef FIXME
@@ -4509,7 +4507,6 @@ ubi32_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
   return get_hard_reg_initial_val (Pmode, LINK_REGNUM);
 }
 
-#ifdef FIXME
 /* Initialise the builtin functions.  Start by initialising
    descriptions of different types of functions (e.g., void fn(int),
    int fn(void)), and then use these to define the builtins. */
@@ -4519,9 +4516,9 @@ ubi32_init_builtins (void)
   tree vptr_type_node;
   tree short_unsigned_ftype_short_unsigned;
   tree unsigned_ftype_unsigned;
+  tree unsigned_ftype_unsigned_unsigned;
   tree void_ftype_vptr_unsigned;
   tree unsigned_ftype_vptr_unsigned;
-  tree ptr_ftype_void;
   tree void_ftype_ptr;
   tree decl;
 
@@ -4536,9 +4533,10 @@ ubi32_init_builtins (void)
     = build_function_type_list (unsigned_type_node,
 				unsigned_type_node,
 				NULL_TREE);
-  ptr_ftype_void
-    = build_function_type_list (ptr_type_node,
-				void_list_node,
+  unsigned_ftype_unsigned_unsigned
+    = build_function_type_list (unsigned_type_node,
+				unsigned_type_node,
+				unsigned_type_node,
 				NULL_TREE);
   void_ftype_ptr
     = build_function_type_list (void_type_node,
@@ -4557,30 +4555,20 @@ ubi32_init_builtins (void)
 
   /* Initialise the byte swap functions. */
   add_builtin_function ("__builtin_ubicom32_swapb_2",
-  			short_unsigned_ftype_short_unsigned,
+			short_unsigned_ftype_short_unsigned,
 			UBI32_BUILTIN_UBI32_SWAPB_2,
 			BUILT_IN_MD,
 			NULL,
 			NULL_TREE);
   add_builtin_function ("__builtin_ubicom32_swapb_4",
-  			unsigned_ftype_unsigned,
+			unsigned_ftype_unsigned,
 			UBI32_BUILTIN_UBI32_SWAPB_4,
 			BUILT_IN_MD,
 			NULL,
 			NULL_TREE);
-
-  /* Initialize the thread pointer functions.  */
-  decl = add_builtin_function ("__builtin_thread_pointer",
-			       ptr_ftype_void,
-			       UBI32_BUILTIN_THREAD_POINTER,
-			       BUILT_IN_MD,
-			       NULL,
-			       NULL_TREE);
-  TREE_NOTHROW (decl) = 1;
-
-  add_builtin_function ("__builtin_set_thread_pointer",
-			void_ftype_ptr,
-			UBI32_BUILTIN_SET_THREAD_POINTER,
+  add_builtin_function ("__builtin_ubicom32_addc",
+			unsigned_ftype_unsigned_unsigned,
+			UBI32_BUILTIN_UBI32_ADDC,
 			BUILT_IN_MD,
 			NULL,
 			NULL_TREE);
@@ -4710,7 +4698,7 @@ ubi32_set_jump_prob (int prob)
 static rtx
 ubi32_expand_builtin_spinlock_lock (tree exp)
 {
-  rtx prev_insn;
+  rtx_insn *prev_insn;
   rtx prev_set;
   rtx addr;
   rtx mem;
@@ -4739,7 +4727,7 @@ ubi32_expand_builtin_spinlock_lock (tree exp)
   /* Note that we explicitly do not want any alias information for this
      memory, so that we kill all other live memories.  Otherwise we don't
      satisfy the full barrier semantics of the intrinsic.  */
-  set_mem_align (mem, get_pointer_alignment (loc, BIGGEST_ALIGNMENT));
+  set_mem_align (mem, get_pointer_alignment (loc));
   set_mem_alias_set (mem, ALIAS_SET_MEMORY_BARRIER);
   MEM_VOLATILE_P (mem) = 1;
 
@@ -4771,7 +4759,7 @@ ubi32_expand_builtin_spinlock_lock (tree exp)
 static rtx
 ubi32_expand_builtin_spinlock_unlock (tree exp)
 {
-  rtx prev_insn;
+  rtx_insn *prev_insn;
   rtx prev_set;
   rtx addr;
   rtx mem;
@@ -4797,7 +4785,7 @@ ubi32_expand_builtin_spinlock_unlock (tree exp)
   /* Note that we explicitly do not want any alias information for this
      memory, so that we kill all other live memories.  Otherwise we don't
      satisfy the full barrier semantics of the intrinsic.  */
-  set_mem_align (mem, get_pointer_alignment (loc, BIGGEST_ALIGNMENT));
+  set_mem_align (mem, get_pointer_alignment (loc));
   set_mem_alias_set (mem, ALIAS_SET_MEMORY_BARRIER);
   MEM_VOLATILE_P (mem) = 1;
 
@@ -4819,7 +4807,7 @@ ubi32_expand_builtin_spinlock_unlock (tree exp)
 static rtx
 ubi32_expand_builtin_spinlock_is_locked (tree exp, rtx target)
 {
-  rtx prev_insn;
+  rtx_insn *prev_insn;
   rtx prev_set;
   rtx addr;
   rtx mem;
@@ -4850,7 +4838,7 @@ ubi32_expand_builtin_spinlock_is_locked (tree exp, rtx target)
   /* Note that we explicitly do not want any alias information for this
      memory, so that we kill all other live memories.  Otherwise we don't
      satisfy the full barrier semantics of the intrinsic.  */
-  set_mem_align (mem, get_pointer_alignment (loc, BIGGEST_ALIGNMENT));
+  set_mem_align (mem, get_pointer_alignment (loc));
   set_mem_alias_set (mem, ALIAS_SET_MEMORY_BARRIER);
   MEM_VOLATILE_P (mem) = 1;
 
@@ -4879,7 +4867,7 @@ ubi32_expand_builtin_spinlock_is_locked (tree exp, rtx target)
 static rtx
 ubi32_expand_builtin_spinlock_try_lock (tree exp, rtx target)
 {
-  rtx prev_insn;
+  rtx_insn *prev_insn;
   rtx prev_set;
   rtx addr;
   rtx mem;
@@ -4914,7 +4902,7 @@ ubi32_expand_builtin_spinlock_try_lock (tree exp, rtx target)
   /* Note that we explicitly do not want any alias information for this
      memory, so that we kill all other live memories.  Otherwise we don't
      satisfy the full barrier semantics of the intrinsic.  */
-  set_mem_align (mem, get_pointer_alignment (loc, BIGGEST_ALIGNMENT));
+  set_mem_align (mem, get_pointer_alignment (loc));
   set_mem_alias_set (mem, ALIAS_SET_MEMORY_BARRIER);
   MEM_VOLATILE_P (mem) = 1;
 
@@ -4961,20 +4949,10 @@ ubi32_expand_builtin (tree exp, rtx target, rtx subtarget ATTRIBUTE_UNUSED,
       return ubi32_expand_builtin_1t_1s (CODE_FOR_bswaphi2, exp, target);
 
     case UBI32_BUILTIN_UBI32_SWAPB_4:
-      return ubi32_expand_builtin_1t_2s (CODE_FOR_bswapsi2, exp, target);
+      return ubi32_expand_builtin_1t_1s (CODE_FOR_bswapsi2, exp, target);
 
-    case UBI32_BUILTIN_THREAD_POINTER:
-      if (!target || !register_operand (target, Pmode))
-	target = gen_reg_rtx (Pmode);
-      emit_move_insn (target, gen_rtx_REG (Pmode, THREAD_REGNUM));
-      return target;
-
-    case UBI32_BUILTIN_SET_THREAD_POINTER:
-      arg = expand_normal (CALL_EXPR_ARG (exp, 0));
-      if (!register_operand (arg, Pmode))
-	arg = copy_to_mode_reg (Pmode, arg);
-      emit_insn (gen_movsi_set_thread_pointer (arg));
-      return const0_rtx;
+    case UBI32_BUILTIN_UBI32_ADDC:
+      return ubi32_expand_builtin_1t_2s (CODE_FOR_addsi3_addc, exp, target);
 
     case UBI32_BUILTIN_SPINLOCK_LOCK:
       return ubi32_expand_builtin_spinlock_lock (exp);
@@ -4998,11 +4976,9 @@ ubi32_expand_builtin (tree exp, rtx target, rtx subtarget ATTRIBUTE_UNUSED,
 
 /* Fold any constant argument for a swapb.2 instruction.  */
 static tree
-ubi32_fold_builtin_ubi32_swapb_2 (tree fndecl, tree arglist)
+ubi32_fold_builtin_ubi32_swapb_2 (tree fndecl, tree *arglist)
 {
-  tree arg0;
-
-  arg0 = TREE_VALUE (arglist);
+  tree arg0 = arglist[0];
 
   /* Optimize constant value.  */
   if (TREE_CODE (arg0) == INTEGER_CST)
@@ -5022,11 +4998,9 @@ ubi32_fold_builtin_ubi32_swapb_2 (tree fndecl, tree arglist)
 
 /* Fold any constant argument for a swapb.4 instruction.  */
 static tree
-ubi32_fold_builtin_ubi32_swapb_4 (tree fndecl, tree arglist)
+ubi32_fold_builtin_ubi32_swapb_4 (tree fndecl, tree *arglist)
 {
-  tree arg0;
-
-  arg0 = TREE_VALUE (arglist);
+  tree arg0 = arglist[0];
 
   /* Optimize constant value.  */
   if (TREE_CODE (arg0) == INTEGER_CST)
@@ -5048,7 +5022,8 @@ ubi32_fold_builtin_ubi32_swapb_4 (tree fndecl, tree arglist)
 
 /* Fold any constant arguments for builtin functions.  */
 static tree
-ubi32_fold_builtin (tree fndecl, tree arglist, bool ignore ATTRIBUTE_UNUSED)
+ubi32_fold_builtin (tree fndecl, int n_args ATTRIBUTE_UNUSED, tree *arglist,
+		    bool ignore ATTRIBUTE_UNUSED)
 {
   switch (DECL_FUNCTION_CODE (fndecl))
     {
@@ -5058,17 +5033,19 @@ ubi32_fold_builtin (tree fndecl, tree arglist, bool ignore ATTRIBUTE_UNUSED)
     case UBI32_BUILTIN_UBI32_SWAPB_4:
       return ubi32_fold_builtin_ubi32_swapb_4 (fndecl, arglist);
 
-    case UBI32_BUILTIN_THREAD_POINTER:
-    case UBI32_BUILTIN_SET_THREAD_POINTER:
     case UBI32_BUILTIN_SPINLOCK_LOCK:
     case UBI32_BUILTIN_SPINLOCK_UNLOCK:
     case UBI32_BUILTIN_SPINLOCK_TRY_LOCK:
     case UBI32_BUILTIN_SPINLOCK_IS_LOCKED:
+    case UBI32_BUILTIN_UBI32_ADDC:
+      break;
+
     default:
-      return NULL;
+      gcc_unreachable ();
     }
+
+  return NULL_TREE;
 }
-#endif
 
 /* Implementation of TARGET_ASM_INTEGER.  When using FD-PIC, we need to
    tell the assembler to generate pointers to function descriptors in
@@ -5592,7 +5569,6 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 #undef TARGET_RETURN_IN_MEMORY
 #define TARGET_RETURN_IN_MEMORY ubi32_return_in_memory
 
-#ifdef FIXME
 #undef TARGET_INIT_BUILTINS
 #define TARGET_INIT_BUILTINS ubi32_init_builtins
 
@@ -5601,7 +5577,6 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 
 #undef TARGET_FOLD_BUILTIN
 #define TARGET_FOLD_BUILTIN ubi32_fold_builtin
-#endif /* FIXME */
 
 #undef TARGET_CANNOT_FORCE_CONST_MEM
 #define TARGET_CANNOT_FORCE_CONST_MEM ubi32_cannot_force_const_mem
