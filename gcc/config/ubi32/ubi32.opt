@@ -1,5 +1,5 @@
 march=
-Target Report Var(ubi32_arch_name) Init("ubicom32v61") Joined
+Target Report Var(ubi32_arch_name) Init("ubi32v61") Joined
 Specify the name of the target architecture
 
 mfdpic

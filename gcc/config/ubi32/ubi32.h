@@ -1170,15 +1170,15 @@ typedef struct ubi32_args
 
 #define ENDIAN_SPEC \
   "%{!mbig-endian: %{!mlittle-endian: %{!march=*:-EL}}} \
-  %{!mbig-endian: %{!mlittle-endian: %{march=ubicom32v6:-EL}}} \
-  %{!mbig-endian: %{!mlittle-endian: %{march=ubicom32v61:-EL}}} \
+  %{!mbig-endian: %{!mlittle-endian: %{march=ubi32v6:-EL}}} \
+  %{!mbig-endian: %{!mlittle-endian: %{march=ubi32v61:-EL}}} \
   %{mbig-endian:-EB} \
   %{mlittle-endian:-EL} "
 
 #undef ASM_SPEC
 #define ASM_SPEC "\
   %{march=*:-m%*} \
-  %{!march=*:-mubicom32v61} \
+  %{!march=*:-mubi32v61} \
   %{mfdpic:-mfdpic} \
   %{mcpu=*:-mcpu=%*} "\
   ENDIAN_SPEC
@@ -1208,7 +1208,7 @@ typedef struct ubi32_args
 #define HAVE_GAS_SHF_MERGE 0
 
 #undef MULTILIB_DEFAULTS
-#define MULTILIB_DEFAULTS { "march=ubicom32v61" }
+#define MULTILIB_DEFAULTS { "march=ubi32v61" }
 
 
 /* Define builtins for selected special-purpose instructions. */

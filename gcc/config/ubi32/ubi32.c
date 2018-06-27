@@ -210,7 +210,8 @@ ubi32_option_override (void)
 {
   flag_pic = 0;
 
-  if (strcmp (ubi32_arch_name, "ubicom32v1") == 0)
+  if ((strcmp (ubi32_arch_name, "ubicom32v1") == 0)
+      || (strcmp (ubi32_arch_name, "ubi32v1") == 0))
     {
       /* If we have a version 1 architecture then we want to avoid using jump
 	 tables.  */
@@ -222,7 +223,8 @@ ubi32_option_override (void)
       ubi32_arch = UBI32_V3;
       ubi32_big_endian = 1;
     }
-  else if (strcmp (ubi32_arch_name, "ubicom32v2") == 0)
+  else if ((strcmp (ubi32_arch_name, "ubicom32v2") == 0)
+	   || (strcmp (ubi32_arch_name, "ubi32v2") == 0))
     {
       ubi32_v3 = 0;
       ubi32_v4 = 0;
@@ -232,7 +234,8 @@ ubi32_option_override (void)
       ubi32_arch = UBI32_V3;
       ubi32_big_endian = 1;
     }
-  else if (strcmp (ubi32_arch_name, "ubicom32v3") == 0)
+  else if ((strcmp (ubi32_arch_name, "ubicom32v3") == 0)
+	   || (strcmp (ubi32_arch_name, "ubi32v3") == 0))
     {
       ubi32_v3 = 1;
       ubi32_v4 = 0;
@@ -242,7 +245,8 @@ ubi32_option_override (void)
       ubi32_arch = UBI32_V3;
       ubi32_big_endian = 1;
     }
-  else if (strcmp (ubi32_arch_name, "ubicom32v4") == 0)
+  else if ((strcmp (ubi32_arch_name, "ubicom32v4") == 0)
+	   || (strcmp (ubi32_arch_name, "ubi32v4") == 0))
     {
       ubi32_v3 = 1;
       ubi32_v4 = 1;
@@ -252,7 +256,8 @@ ubi32_option_override (void)
       ubi32_arch = UBI32_V4;
       ubi32_big_endian = 1;
     }
-  else if (strcmp (ubi32_arch_name, "ubicom32v5") == 0)
+  else if ((strcmp (ubi32_arch_name, "ubicom32v5") == 0)
+	  || (strcmp (ubi32_arch_name, "ubi32v5") == 0))
     {
       ubi32_v3 = 1;
       ubi32_v4 = 1;
@@ -264,7 +269,8 @@ ubi32_option_override (void)
       if (!TARGET_SOFT_FLOAT)
 	target_flags &= ~MASK_SOFT_FLOAT;
     }
-  else if (strcmp (ubi32_arch_name, "ubicom32v6") == 0)
+  else if ((strcmp (ubi32_arch_name, "ubicom32v6") == 0)
+	   || (strcmp (ubi32_arch_name, "ubi32v6") == 0))
     {
       ubi32_v3 = 1;
       ubi32_v4 = 1;
@@ -274,7 +280,8 @@ ubi32_option_override (void)
       ubi32_arch = UBI32_V6;
       ubi32_big_endian = 0;
     }
-  else if (strcmp (ubi32_arch_name, "ubicom32v61") == 0)
+  else if ((strcmp (ubi32_arch_name, "ubicom32v61") == 0)
+	   || (strcmp (ubi32_arch_name, "ubi32v61") == 0))
     {
       ubi32_v3 = 1;
       ubi32_v4 = 1;
@@ -302,7 +309,7 @@ ubi32_option_override (void)
     }
 #endif
 
-  /*  Only ubicom32v5 can have HARD_FLOAT.  */
+  /*  Only ubi32v5 can have HARD_FLOAT.  */
   if (TARGET_HARD_FLOAT && ((ubi32_v6 || ubi32_v61) || !ubi32_v5)) 
     {
       warning (0, "-mhard_float invalid for -march=%s", ubi32_arch_name);

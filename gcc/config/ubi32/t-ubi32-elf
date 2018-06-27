@@ -2,6 +2,13 @@ MULTILIB_OPTIONS = march=ubi32v6/march=ubi32v61
 MULTILIB_OPTIONS += mbig-endian
 MULTILIB_OPTIONS += mipos-abi
 MULTILIB_OPTIONS += fleading-underscore
+MULTILIB_MATCHES = march?ubi32v1=march?ubicom32v1
+MULTILIB_MATCHES += march?ubi32v2=march?ubicom32v2
+MULTILIB_MATCHES += march?ubi32v3=march?ubicom32v3
+MULTILIB_MATCHES += march?ubi32v4=march?ubicom32v4
+MULTILIB_MATCHES += march?ubi32v5=march?ubicom32v5
+MULTILIB_MATCHES += march?ubi32v6=march?ubicom32v6
+MULTILIB_MATCHES += march?ubi32v61=march?ubicom32v61
 
 ubi32-c.o: $(srcdir)/config/ubi32/ubi32-c.c $(CONFIG_H) $(SYSTEM_H) \
 	coretypes.h $(TM_H) $(TREE_H) output.h $(C_COMMON_H)
