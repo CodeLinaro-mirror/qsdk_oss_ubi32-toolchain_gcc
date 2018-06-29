@@ -74,7 +74,7 @@ ubi32_handle_option (struct gcc_options *opts ATTRIBUTE_UNUSED,
 	    }
 	if (selected_processor == UBI32_NONE)
 	  {
-	    warning (loc, 0, "-mcpu=%s unrecognized processor", arg);
+	    warning (0, "-mcpu=%s unrecognized processor", arg);
 	    return false;
 	  }
     }
