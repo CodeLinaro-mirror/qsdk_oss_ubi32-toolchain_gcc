@@ -1,5 +1,4 @@
 MULTILIB_OPTIONS = march=ubi32v6/march=ubi32v61
-MULTILIB_OPTIONS += mbig-endian
 MULTILIB_OPTIONS += mipos-abi
 MULTILIB_OPTIONS += fleading-underscore
 MULTILIB_MATCHES = march?ubi32v1=march?ubicom32v1
