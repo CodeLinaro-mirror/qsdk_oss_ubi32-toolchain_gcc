@@ -3506,9 +3506,12 @@ ubi32_legitimate_address_p (machine_mode mode, rtx x, int strict)
   if (GET_CODE (x) == PLUS
       && ubi32_is_base_reg (XEXP (x, 0), strict)
       && (ubi32_is_index_expr (mode, XEXP (x, 1), strict)
+#if 0
 	  || (!strict
 	      && CONST_INT_P (XEXP (x, 1))
 	      && REGNO_PTR_FRAME_P (REGNO (XEXP (x, 0))))))
+#endif
+      ))
     return true;
 
   /* Accept index * scale + base.
@@ -3520,9 +3523,12 @@ ubi32_legitimate_address_p (machine_mode mode, rtx x, int strict)
   if (GET_CODE (x) == PLUS
       && ubi32_is_base_reg (XEXP (x, 1), strict)
       && (ubi32_is_index_expr (mode, XEXP (x, 0), strict)
+#if 0
 	  || (!strict
 	      && CONST_INT_P (XEXP (x, 0))
-	      && REGNO_PTR_FRAME_P (REGNO (XEXP (x, 1))))))
+	      && REGNO_PTR_FRAME_P (REGNO (XEXP (x, 1))))
+#endif
+      ))
     return true;
 
   if (! TARGET_FDPIC)
