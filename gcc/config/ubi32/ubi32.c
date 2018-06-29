@@ -467,7 +467,7 @@ ubi32_print_operand (FILE *file, rtx x, int code)
       {
 	machine_mode mode;
 
-	mode = GET_MODE (x);
+	mode = GET_MODE (XEXP (x, 0));
 
 	/* These are normal and reversed branches.  */
 	switch (code == 'b' ? GET_CODE (x) : reverse_condition (GET_CODE (x)))
