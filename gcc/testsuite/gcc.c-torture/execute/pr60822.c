@@ -1,4 +1,5 @@
 /* { dg-require-effective-target int32plus } */
+/* { dg-require-effective-target bigbss } */
 struct X {
     char fill0[800000];
     int a;

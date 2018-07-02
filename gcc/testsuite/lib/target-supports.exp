@@ -766,7 +766,9 @@ proc add_options_for_tls { flags } {
 # Return 1 if indirect jumps are supported, 0 otherwise.
 
 proc check_effective_target_indirect_jumps {} {
-    if { [istarget nvptx-*-*] } {
+    if { [istarget nvptx-*-*] 
+         || [istarget ubi32-qemu]
+         || [istarget ubicom32-qemu] } {
 	return 0
     }
     return 1
@@ -9306,3 +9308,11 @@ proc check_effective_target_cet { } {
 	}
     } "-O2" ]
 }
+
+proc check_effective_target_bigbss { } {
+  if { [istarget ubicom32-*] } {
+    return 0
+  }
+  return 1
+}
+
