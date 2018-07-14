@@ -3811,7 +3811,7 @@ equiv_constant (rtx x)
 	  && known_lt (UNITS_PER_WORD, GET_MODE_SIZE (imode)))
 	{
 	  poly_int64 byte = (SUBREG_BYTE (x)
-			     - subreg_lowpart_offset (mode, word_mode));
+			     - subreg_lowpart_offset (mode, word_mode, 0));
 	  if (known_ge (byte, 0) && multiple_p (byte, UNITS_PER_WORD))
 	    {
 	      rtx y = gen_rtx_SUBREG (word_mode, SUBREG_REG (x), byte);
@@ -6024,7 +6024,7 @@ cse_insn (rtx_insn *insn)
 		else
 		  {
 		    poly_uint64 byte
-		      = subreg_lowpart_offset (new_mode, GET_MODE (dest));
+		      = subreg_lowpart_offset (new_mode, GET_MODE (dest), 0);
 		    new_src = simplify_gen_subreg (new_mode, elt->exp,
 					           GET_MODE (dest), byte);
 		  }

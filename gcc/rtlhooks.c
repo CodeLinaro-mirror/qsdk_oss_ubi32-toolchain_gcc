@@ -125,7 +125,7 @@ gen_lowpart_if_possible (machine_mode mode, rtx x)
     }
   else if (mode != GET_MODE (x) && GET_MODE (x) != VOIDmode && !SUBREG_P (x)
 	   && validate_subreg (mode, GET_MODE (x), x,
-			       subreg_lowpart_offset (mode, GET_MODE (x))))
+			       subreg_lowpart_offset (mode, GET_MODE (x), 0)))
     return gen_lowpart_SUBREG (mode, x);
   else
     return 0;

@@ -2383,7 +2383,7 @@ extern void get_full_rtx_cost (rtx, machine_mode, enum rtx_code, int,
 extern poly_uint64 subreg_lsb (const_rtx);
 extern poly_uint64 subreg_lsb_1 (machine_mode, machine_mode, poly_uint64);
 extern poly_uint64 subreg_size_offset_from_lsb (poly_uint64, poly_uint64,
-						poly_uint64);
+						poly_uint64, bool);
 extern bool read_modify_subreg_p (const_rtx);
 
 /* Return the subreg byte offset for a subreg whose outer mode is
@@ -2395,10 +2395,12 @@ extern bool read_modify_subreg_p (const_rtx);
 inline poly_uint64
 subreg_offset_from_lsb (machine_mode outer_mode,
 			machine_mode inner_mode,
-			poly_uint64 lsb_shift)
+			poly_uint64 lsb_shift,
+			bool is_reg ATTRIBUTE_UNUSED)
 {
   return subreg_size_offset_from_lsb (GET_MODE_SIZE (outer_mode),
-				      GET_MODE_SIZE (inner_mode), lsb_shift);
+				      GET_MODE_SIZE (inner_mode), lsb_shift,
+				      is_reg);
 }
 
 extern unsigned int subreg_regno_offset (unsigned int, machine_mode,
@@ -3074,7 +3076,8 @@ extern rtx operand_subword (rtx, poly_uint64, int, machine_mode);
 /* In emit-rtl.c */
 extern rtx operand_subword_force (rtx, poly_uint64, machine_mode);
 extern int subreg_lowpart_p (const_rtx);
-extern poly_uint64 subreg_size_lowpart_offset (poly_uint64, poly_uint64);
+extern poly_uint64 subreg_size_lowpart_offset (poly_uint64, poly_uint64,
+					       bool);
 
 /* Return true if a subreg of mode OUTERMODE would only access part of
    an inner register with mode INNERMODE.  The other bits of the inner
@@ -3132,10 +3135,11 @@ paradoxical_subreg_p (const_rtx x)
 /* Return the SUBREG_BYTE for an OUTERMODE lowpart of an INNERMODE value.  */
 
 inline poly_uint64
-subreg_lowpart_offset (machine_mode outermode, machine_mode innermode)
+subreg_lowpart_offset (machine_mode outermode, 
+		       machine_mode innermode, bool is_reg)
 {
-  return subreg_size_lowpart_offset (GET_MODE_SIZE (outermode),
-				     GET_MODE_SIZE (innermode));
+  return subreg_size_lowpart_offset (GET_MODE_SIZE (outermode), 
+				     GET_MODE_SIZE (innermode), is_reg);
 }
 
 /* Given that a subreg has outer mode OUTERMODE and inner mode INNERMODE,
@@ -3166,7 +3170,7 @@ wider_subreg_mode (const_rtx x)
   return wider_subreg_mode (GET_MODE (x), GET_MODE (SUBREG_REG (x)));
 }
 
-extern poly_uint64 subreg_size_highpart_offset (poly_uint64, poly_uint64);
+extern poly_uint64 subreg_size_highpart_offset (poly_uint64, poly_uint64, bool);
 
 /* Return the SUBREG_BYTE for an OUTERMODE highpart of an INNERMODE value.  */
 
@@ -3174,7 +3178,7 @@ inline poly_uint64
 subreg_highpart_offset (machine_mode outermode, machine_mode innermode)
 {
   return subreg_size_highpart_offset (GET_MODE_SIZE (outermode),
-				      GET_MODE_SIZE (innermode));
+				      GET_MODE_SIZE (innermode), 0);
 }
 
 extern poly_int64 byte_lowpart_offset (machine_mode, machine_mode);

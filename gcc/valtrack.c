@@ -44,7 +44,7 @@ gen_lowpart_for_debug (machine_mode mode, rtx x)
 
   if (GET_MODE (x) != VOIDmode)
     return gen_rtx_raw_SUBREG (mode, x,
-			       subreg_lowpart_offset (mode, GET_MODE (x)));
+			       subreg_lowpart_offset (mode, GET_MODE (x), 0));
 
   return NULL_RTX;
 }
@@ -557,7 +557,7 @@ debug_lowpart_subreg (machine_mode outer_mode, rtx expr,
 {
   if (inner_mode == VOIDmode)
     inner_mode = GET_MODE (expr);
-  poly_int64 offset = subreg_lowpart_offset (outer_mode, inner_mode);
+  poly_int64 offset = subreg_lowpart_offset (outer_mode, inner_mode, 0);
   rtx ret = simplify_gen_subreg (outer_mode, expr, inner_mode, offset);
   if (ret)
     return ret;

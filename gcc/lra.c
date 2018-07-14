@@ -1940,7 +1940,7 @@ lra_substitute_pseudo (rtx *loc, int old_regno, rtx new_reg, bool subreg_p,
 	  poly_uint64 offset = 0;
 	  if (partial_subreg_p (mode, inner_mode)
 	      && SCALAR_INT_MODE_P (inner_mode))
-	    offset = subreg_lowpart_offset (mode, inner_mode);
+	    offset = subreg_lowpart_offset (mode, inner_mode, 0);
 	  if (debug_p)
 	    new_reg = gen_rtx_raw_SUBREG (mode, new_reg, offset);
 	  else

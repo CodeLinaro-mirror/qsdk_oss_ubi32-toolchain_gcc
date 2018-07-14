@@ -2475,7 +2475,7 @@ emit_group_store (rtx orig_dst, rtx src, tree type ATTRIBUTE_UNUSED,
       if (start < finish)
 	{
 	  inner = GET_MODE (tmps[start]);
-	  bytepos = subreg_lowpart_offset (inner, outer);
+	  bytepos = subreg_lowpart_offset (inner, outer, 0);
 	  if (known_eq (INTVAL (XEXP (XVECEXP (src, 0, start), 1)), bytepos))
 	    {
 	      temp = simplify_gen_subreg (outer, tmps[start],
@@ -2494,7 +2494,7 @@ emit_group_store (rtx orig_dst, rtx src, tree type ATTRIBUTE_UNUSED,
 	  && start < finish - 1)
 	{
 	  inner = GET_MODE (tmps[finish - 1]);
-	  bytepos = subreg_lowpart_offset (inner, outer);
+	  bytepos = subreg_lowpart_offset (inner, outer, 0);
 	  if (known_eq (INTVAL (XEXP (XVECEXP (src, 0, finish - 1), 1)),
 			bytepos))
 	    {

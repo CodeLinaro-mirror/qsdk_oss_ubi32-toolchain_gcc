@@ -346,7 +346,7 @@ copy_value (rtx dest, rtx src, struct value_data *vd)
      record anything then.  */
   else if (sn < hard_regno_nregs (sr, vd->e[sr].mode)
 	   && maybe_ne (subreg_lowpart_offset (GET_MODE (dest),
-					       vd->e[sr].mode), 0U))
+					       vd->e[sr].mode, 0), 0U))
     return;
 
   /* If SRC had been assigned a mode narrower than the copy, we can't
@@ -413,7 +413,7 @@ maybe_mode_change (machine_mode orig_mode, machine_mode copy_mode,
       poly_uint64 copy_offset = bytes_per_reg * (copy_nregs - use_nregs);
       poly_uint64 offset
 	= subreg_size_lowpart_offset (GET_MODE_SIZE (new_mode) + copy_offset,
-				      GET_MODE_SIZE (orig_mode));
+				      GET_MODE_SIZE (orig_mode), 0);
       regno += subreg_regno_offset (regno, orig_mode, offset, new_mode);
       if (targetm.hard_regno_mode_ok (regno, new_mode))
 	return gen_raw_REG (new_mode, regno);
@@ -872,7 +872,7 @@ copyprop_hardreg_forward_1 (basic_block bb, struct value_data *vd)
 		 is also invalid.  */
 	      if (REG_NREGS (src) < hard_regno_nregs (regno, vd->e[regno].mode)
 		  && maybe_ne (subreg_lowpart_offset (mode,
-						      vd->e[regno].mode), 0U))
+						      vd->e[regno].mode, 0), 0U))
 		goto no_move_special_case;
 	    }
 

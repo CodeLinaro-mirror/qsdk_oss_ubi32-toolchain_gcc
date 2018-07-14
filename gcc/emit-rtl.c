@@ -1023,7 +1023,7 @@ gen_lowpart_SUBREG (machine_mode mode, rtx reg)
   if (inmode == VOIDmode)
     inmode = mode;
   return gen_rtx_SUBREG (mode, reg,
-			 subreg_lowpart_offset (mode, inmode));
+			 subreg_lowpart_offset (mode, inmode, 0));
 }
 
 rtx
@@ -1111,9 +1111,9 @@ byte_lowpart_offset (machine_mode outer_mode,
 		     machine_mode inner_mode)
 {
   if (paradoxical_subreg_p (outer_mode, inner_mode))
-    return -subreg_lowpart_offset (inner_mode, outer_mode);
+    return -subreg_lowpart_offset (inner_mode, outer_mode, 0);
   else
-    return subreg_lowpart_offset (outer_mode, inner_mode);
+    return subreg_lowpart_offset (outer_mode, inner_mode, 0);
 }
 
 /* Return the offset of (subreg:OUTER_MODE (mem:INNER_MODE X) OFFSET)
@@ -1127,7 +1127,7 @@ subreg_memory_offset (machine_mode outer_mode, machine_mode inner_mode,
   if (paradoxical_subreg_p (outer_mode, inner_mode))
     {
       gcc_assert (known_eq (offset, 0U));
-      return -subreg_lowpart_offset (inner_mode, outer_mode);
+      return -subreg_lowpart_offset (inner_mode, outer_mode, 0);
     }
   return offset;
 }
@@ -1647,7 +1647,9 @@ gen_highpart_mode (machine_mode outermode, machine_mode innermode, rtx exp)
    OUTER_BYTES bytes and whose inner mode has INNER_BYTES bytes.  */
 
 poly_uint64
-subreg_size_lowpart_offset (poly_uint64 outer_bytes, poly_uint64 inner_bytes)
+subreg_size_lowpart_offset (poly_uint64 outer_bytes,
+			    poly_uint64 inner_bytes,
+			    bool is_reg ATTRIBUTE_UNUSED)
 {
   gcc_checking_assert (ordered_p (outer_bytes, inner_bytes));
   if (maybe_gt (outer_bytes, inner_bytes))
@@ -1659,14 +1661,15 @@ subreg_size_lowpart_offset (poly_uint64 outer_bytes, poly_uint64 inner_bytes)
   else if (!BYTES_BIG_ENDIAN && !WORDS_BIG_ENDIAN)
     return 0;
   else
-    return subreg_size_offset_from_lsb (outer_bytes, inner_bytes, 0);
+    return subreg_size_offset_from_lsb (outer_bytes, inner_bytes, 0, 0);
 }
 
 /* Return the SUBREG_BYTE for a highpart subreg whose outer mode has
    OUTER_BYTES bytes and whose inner mode has INNER_BYTES bytes.  */
 
 poly_uint64
-subreg_size_highpart_offset (poly_uint64 outer_bytes, poly_uint64 inner_bytes)
+subreg_size_highpart_offset (poly_uint64 outer_bytes, poly_uint64 inner_bytes,
+			     bool is_reg ATTRIBUTE_UNUSED)
 {
   gcc_assert (known_ge (inner_bytes, outer_bytes));
 
@@ -1677,7 +1680,7 @@ subreg_size_highpart_offset (poly_uint64 outer_bytes, poly_uint64 inner_bytes)
   else
     return subreg_size_offset_from_lsb (outer_bytes, inner_bytes,
 					(inner_bytes - outer_bytes)
-					* BITS_PER_UNIT);
+					* BITS_PER_UNIT, 0);
 }
 
 /* Return 1 iff X, assumed to be a SUBREG,
@@ -1693,7 +1696,7 @@ subreg_lowpart_p (const_rtx x)
     return 0;
 
   return known_eq (subreg_lowpart_offset (GET_MODE (x),
-					  GET_MODE (SUBREG_REG (x))),
+					  GET_MODE (SUBREG_REG (x)), 0),
 		   SUBREG_BYTE (x));
 }
 

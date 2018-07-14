@@ -299,7 +299,7 @@ move_plus_up (rtx x)
     {
       rtx cst = simplify_subreg (x_mode, XEXP (subreg_reg, 1), subreg_reg_mode,
 				 subreg_lowpart_offset (x_mode,
-							subreg_reg_mode));
+							subreg_reg_mode, 0));
       if (cst && CONSTANT_P (cst))
 	return gen_rtx_PLUS (x_mode, lowpart_subreg (x_mode,
 						     XEXP (subreg_reg, 0),

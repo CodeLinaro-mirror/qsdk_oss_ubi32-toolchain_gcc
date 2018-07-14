@@ -5877,7 +5877,7 @@ combine_simplify_rtx (rtx x, machine_mode op0_mode, int in_dest,
 
       /* See if this can be moved to simplify_subreg.  */
       if (CONSTANT_P (SUBREG_REG (x))
-	  && known_eq (subreg_lowpart_offset (mode, op0_mode), SUBREG_BYTE (x))
+	  && known_eq (subreg_lowpart_offset (mode, op0_mode, 0), SUBREG_BYTE (x))
 	     /* Don't call gen_lowpart if the inner mode
 		is VOIDmode and we cannot simplify it, as SUBREG without
 		inner mode is invalid.  */
@@ -5901,7 +5901,7 @@ combine_simplify_rtx (rtx x, machine_mode op0_mode, int in_dest,
 	    && is_a <scalar_int_mode> (op0_mode, &int_op0_mode)
 	    && (GET_MODE_PRECISION (int_mode)
 		< GET_MODE_PRECISION (int_op0_mode))
-	    && known_eq (subreg_lowpart_offset (int_mode, int_op0_mode),
+	    && known_eq (subreg_lowpart_offset (int_mode, int_op0_mode, 0),
 			 SUBREG_BYTE (x))
 	    && HWI_COMPUTABLE_MODE_P (int_op0_mode)
 	    && (nonzero_bits (SUBREG_REG (x), int_op0_mode)
@@ -7630,7 +7630,7 @@ make_extraction (machine_mode mode, rtx inner, HOST_WIDE_INT pos,
 	      if (pos || in_dest)
 		{
 		  poly_uint64 offset
-		    = subreg_offset_from_lsb (tmode, inner_mode, pos);
+		    = subreg_offset_from_lsb (tmode, inner_mode, pos, 0);
 
 		  /* Avoid creating invalid subregs, for example when
 		     simplifying (x>>32)&255.  */

@@ -2269,7 +2269,7 @@ alter_reg (int i, int from_reg, bool dont_share_p)
 
       /* On a big endian machine, the "address" of the slot
 	 is the address of the low part that fits its inherent mode.  */
-      adjust += subreg_size_lowpart_offset (inherent_size, total_size);
+      adjust += subreg_size_lowpart_offset (inherent_size, total_size, 0);
 
       /* If we have any adjustment to make, or if the stack slot is the
 	 wrong mode, make a new stack slot.  */
@@ -6376,7 +6376,7 @@ compute_reload_subreg_offset (machine_mode outermode,
   machine_mode middlemode;
 
   if (!subreg)
-    return subreg_lowpart_offset (outermode, innermode);
+    return subreg_lowpart_offset (outermode, innermode, 0);
 
   outer_offset = SUBREG_BYTE (subreg);
   middlemode = GET_MODE (SUBREG_REG (subreg));
@@ -6385,11 +6385,11 @@ compute_reload_subreg_offset (machine_mode outermode,
      for OUTERMODE and INNERMODE.  Our caller has already checked
      that OUTERMODE fits in INNERMODE.  */
   if (paradoxical_subreg_p (outermode, middlemode))
-    return subreg_lowpart_offset (outermode, innermode);
+    return subreg_lowpart_offset (outermode, innermode, 0);
 
   /* SUBREG is normal, but may not be lowpart; return OUTER_OFFSET
      plus the normal lowpart offset for MIDDLEMODE and INNERMODE.  */
-  return outer_offset + subreg_lowpart_offset (middlemode, innermode);
+  return outer_offset + subreg_lowpart_offset (middlemode, innermode, 0);
 }
 
 /* Assign hard reg targets for the pseudo-registers we must reload

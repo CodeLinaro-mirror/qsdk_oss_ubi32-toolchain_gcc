@@ -785,7 +785,7 @@ simplify_truncation (machine_mode mode, rtx op,
       && (INTVAL (XEXP (op, 1)) & (precision - 1)) == 0
       && UINTVAL (XEXP (op, 1)) < op_precision)
     {
-      poly_int64 byte = subreg_lowpart_offset (mode, op_mode);
+      poly_int64 byte = subreg_lowpart_offset (mode, op_mode, 0);
       int shifted_bytes = INTVAL (XEXP (op, 1)) / BITS_PER_UNIT;
       return simplify_gen_subreg (mode, XEXP (op, 0), op_mode,
 				  (WORDS_BIG_ENDIAN
@@ -811,7 +811,7 @@ simplify_truncation (machine_mode mode, rtx op,
       && (GET_MODE_SIZE (int_mode) >= UNITS_PER_WORD
 	  || WORDS_BIG_ENDIAN == BYTES_BIG_ENDIAN))
     {
-      poly_int64 byte = subreg_lowpart_offset (int_mode, int_op_mode);
+      poly_int64 byte = subreg_lowpart_offset (int_mode, int_op_mode, 0);
       int shifted_bytes = INTVAL (XEXP (op, 1)) / BITS_PER_UNIT;
       return adjust_address_nv (XEXP (op, 0), int_mode,
 				(WORDS_BIG_ENDIAN
@@ -6417,7 +6417,7 @@ simplify_subreg (machine_mode outermode, rtx op,
 	     The information is used only by alias analysis that can not
 	     grog partial register anyway.  */
 
-	  if (known_eq (subreg_lowpart_offset (outermode, innermode), byte))
+	  if (known_eq (subreg_lowpart_offset (outermode, innermode, 0), byte))
 	    ORIGINAL_REGNO (x) = ORIGINAL_REGNO (op);
 	  return x;
 	}
@@ -6488,7 +6488,7 @@ simplify_subreg (machine_mode outermode, rtx op,
   scalar_int_mode int_outermode, int_innermode;
   if (is_a <scalar_int_mode> (outermode, &int_outermode)
       && is_a <scalar_int_mode> (innermode, &int_innermode)
-      && known_eq (byte, subreg_lowpart_offset (int_outermode, int_innermode)))
+      && known_eq (byte, subreg_lowpart_offset (int_outermode, int_innermode, 0)))
     {
       /* Handle polynomial integers.  The upper bits of a paradoxical
 	 subreg are undefined, so this is safe regardless of whether
@@ -6545,7 +6545,7 @@ lowpart_subreg (machine_mode outer_mode, rtx expr,
 			     machine_mode inner_mode)
 {
   return simplify_gen_subreg (outer_mode, expr, inner_mode,
-			      subreg_lowpart_offset (outer_mode, inner_mode));
+			      subreg_lowpart_offset (outer_mode, inner_mode, 0));
 }
 
 /* Simplify X, an rtx expression.
@@ -6718,7 +6718,7 @@ test_vector_ops_duplicate (machine_mode mode, rtx scalar_reg)
     }
 
   /* Test a scalar subreg of a VEC_DUPLICATE.  */
-  poly_uint64 offset = subreg_lowpart_offset (inner_mode, mode);
+  poly_uint64 offset = subreg_lowpart_offset (inner_mode, mode, 0);
   ASSERT_RTX_EQ (scalar_reg,
 		 simplify_gen_subreg (inner_mode, duplicate,
 				      mode, offset));
@@ -6739,7 +6739,7 @@ test_vector_ops_duplicate (machine_mode mode, rtx scalar_reg)
 						duplicate, vec_par));
 
       /* Test a vector subreg of a VEC_DUPLICATE.  */
-      poly_uint64 offset = subreg_lowpart_offset (narrower_mode, mode);
+      poly_uint64 offset = subreg_lowpart_offset (narrower_mode, mode, 0);
       ASSERT_RTX_EQ (narrower_duplicate,
 		     simplify_gen_subreg (narrower_mode, duplicate,
 					  mode, offset));
@@ -6852,7 +6852,7 @@ simplify_const_poly_int_tests<N>::run ()
   rtx x10 = gen_int_mode (poly_int64 (-31, -24), HImode);
   rtx two = GEN_INT (2);
   rtx six = GEN_INT (6);
-  poly_uint64 offset = subreg_lowpart_offset (QImode, HImode);
+  poly_uint64 offset = subreg_lowpart_offset (QImode, HImode, 0);
 
   /* These tests only try limited operation combinations.  Fuller arithmetic
      testing is done directly on poly_ints.  */

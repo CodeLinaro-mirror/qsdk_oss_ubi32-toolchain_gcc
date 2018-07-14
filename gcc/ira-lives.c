@@ -925,7 +925,7 @@ process_single_reg_class_operands (bool in_p, int freq)
 	      xregno = ira_class_singleton[cl][xmode];
 	      gcc_assert (xregno >= 0);
 	      ymode = ALLOCNO_MODE (operand_a);
-	      offset = subreg_lowpart_offset (ymode, xmode);
+	      offset = subreg_lowpart_offset (ymode, xmode, 0);
 	      yregno = simplify_subreg_regno (xregno, xmode, offset, ymode);
 	      if (yregno >= 0
 		  && ira_class_hard_reg_index[aclass][yregno] >= 0)

@@ -1717,7 +1717,7 @@ find_shift_sequence (poly_int64 access_size,
 	 e.g. at -Os, even when no actual shift will be needed.  */
       if (store_info->const_rhs)
 	{
-	  poly_uint64 byte = subreg_lowpart_offset (new_mode, store_mode);
+	  poly_uint64 byte = subreg_lowpart_offset (new_mode, store_mode, 0);
 	  rtx ret = simplify_subreg (new_mode, store_info->const_rhs,
 				     store_mode, byte);
 	  if (ret && CONSTANT_P (ret))
@@ -1727,7 +1727,7 @@ find_shift_sequence (poly_int64 access_size,
 						     ret, shift_rtx);
 	      if (ret && CONSTANT_P (ret))
 		{
-		  byte = subreg_lowpart_offset (read_mode, new_mode);
+		  byte = subreg_lowpart_offset (read_mode, new_mode, 0);
 		  ret = simplify_subreg (read_mode, ret, new_mode, byte);
 		  if (ret && CONSTANT_P (ret)
 		      && (set_src_cost (ret, read_mode, speed)

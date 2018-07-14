@@ -3635,7 +3635,7 @@ subreg_lsb (const_rtx x)
 
 poly_uint64
 subreg_size_offset_from_lsb (poly_uint64 outer_bytes, poly_uint64 inner_bytes,
-			     poly_uint64 lsb_shift)
+			     poly_uint64 lsb_shift, bool is_reg ATTRIBUTE_UNUSED)
 {
   /* A paradoxical subreg begins at bit position 0.  */
   gcc_checking_assert (ordered_p (outer_bytes, inner_bytes));
@@ -3817,7 +3817,7 @@ subreg_get_info (unsigned int xregno, machine_mode xmode,
     }
 
   /* Lowpart subregs are otherwise valid.  */
-  if (!rknown && known_eq (offset, subreg_lowpart_offset (ymode, xmode)))
+  if (!rknown && known_eq (offset, subreg_lowpart_offset (ymode, xmode, 0)))
     {
       info->representable_p = true;
       rknown = true;
@@ -3862,7 +3862,7 @@ subreg_get_info (unsigned int xregno, machine_mode xmode,
       /* Only the lowpart of each block is representable.  */
       info->representable_p
 	= known_eq (subblock_offset,
-		    subreg_size_lowpart_offset (ysize, bytes_per_block));
+		    subreg_size_lowpart_offset (ysize, bytes_per_block, 0));
       rknown = true;
     }
 

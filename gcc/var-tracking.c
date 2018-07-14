@@ -956,7 +956,7 @@ use_narrower_mode_test (rtx x, const_rtx subreg)
 	      return false;
 	    if (!validate_subreg (GET_MODE (subreg), GET_MODE (x), x,
 				  subreg_lowpart_offset (GET_MODE (subreg),
-							 GET_MODE (x))))
+							 GET_MODE (x), 0)))
 	      return false;
 	    break;
 	  case PLUS:
@@ -5385,7 +5385,7 @@ var_lowpart (machine_mode mode, rtx loc)
   if (MEM_P (loc))
     return adjust_address_nv (loc, mode, offset);
 
-  poly_uint64 reg_offset = subreg_lowpart_offset (mode, GET_MODE (loc));
+  poly_uint64 reg_offset = subreg_lowpart_offset (mode, GET_MODE (loc), 0);
   regno = REGNO (loc) + subreg_regno_offset (REGNO (loc), GET_MODE (loc),
 					     reg_offset, mode);
   return gen_rtx_REG_offset (loc, mode, regno, offset);
