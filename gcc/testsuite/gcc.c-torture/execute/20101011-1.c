@@ -28,6 +28,9 @@
 #elif defined (__RX__)
   /* On RX division by zero does not trap.  */
 # define DO_TEST 0
+  /* On Ubi32 division by zero does not trap.  */
+#elif defined (__UBICOM32__)
+# define DO_TEST 0
 #elif defined (__aarch64__)
   /* On AArch64 integer division by zero does not trap.  */
 # define DO_TEST 0
