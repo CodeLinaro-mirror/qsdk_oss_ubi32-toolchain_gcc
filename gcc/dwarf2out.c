@@ -13748,6 +13748,7 @@ multiple_reg_loc_descriptor (rtx rtl, rtx regs,
     {
       unsigned reg = REGNO (rtl);
       int nregs;
+      int incr = 1;
 
 #ifdef LEAF_REG_REMAP
       if (crtl->uses_only_leaf_regs)
@@ -13766,6 +13767,15 @@ multiple_reg_loc_descriptor (rtx rtl, rtx regs,
 	return NULL;
       size /= nregs;
 
+      /* DWARF only knows about machine (i.e., memory) endianity.
+	 Reverse register order if register endianity does not match
+         memory endianity.  */
+      if (WORDS_BIG_ENDIAN != REG_WORDS_BIG_ENDIAN)
+	{
+	  reg = reg + nregs - 1;
+	  incr = -1;
+	}
+
       loc_result = NULL;
       while (nregs--)
 	{
@@ -13775,7 +13785,7 @@ multiple_reg_loc_descriptor (rtx rtl, rtx regs,
 				      VAR_INIT_STATUS_INITIALIZED);
 	  add_loc_descr (&loc_result, t);
 	  add_loc_descr_op_piece (&loc_result, size);
-	  ++reg;
+	  reg += incr;
 	}
       return loc_result;
     }
