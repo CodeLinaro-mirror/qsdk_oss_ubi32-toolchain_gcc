@@ -4453,7 +4453,7 @@ ubi32_output_cond_jump (rtx insn ATTRIBUTE_UNUSED, rtx cond, rtx target)
 #endif
   int mostly_false_jump;
   rtx xoperands[2];
-  //rtx cc_reg;
+  rtx cc_reg;
   machine_mode cc_mode;
 
 #ifdef FIXME
@@ -4466,8 +4466,8 @@ ubi32_output_cond_jump (rtx insn ATTRIBUTE_UNUSED, rtx cond, rtx target)
 
   xoperands[0] = target;
   xoperands[1] = cond;
-  //cc_reg = XEXP (cond, 0);
-  cc_mode = GET_MODE (cond);
+  cc_reg = XEXP (cond, 0);
+  cc_mode = GET_MODE (cc_reg);
 
   if (cc_mode == E_CCWmode
       || cc_mode == E_CCWZmode
