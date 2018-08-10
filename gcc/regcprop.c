@@ -413,7 +413,7 @@ maybe_mode_change (machine_mode orig_mode, machine_mode copy_mode,
       poly_uint64 copy_offset = bytes_per_reg * (copy_nregs - use_nregs);
       poly_uint64 offset
 	= subreg_size_lowpart_offset (GET_MODE_SIZE (new_mode) + copy_offset,
-				      GET_MODE_SIZE (orig_mode), 0);
+				      GET_MODE_SIZE (orig_mode), 1);
       regno += subreg_regno_offset (regno, orig_mode, offset, new_mode);
       if (targetm.hard_regno_mode_ok (regno, new_mode))
 	return gen_raw_REG (new_mode, regno);

@@ -6340,6 +6340,7 @@ simplify_subreg (machine_mode outermode, rtx op,
       poly_uint64 innermostsize = GET_MODE_SIZE (innermostmode);
       rtx newx;
 
+/* FIXME:  Check REG_WORDS_BIG_ENDIAN != WORDS_BIG_ENDIAN? */
       if (outermode == innermostmode
 	  && known_eq (byte, 0U)
 	  && known_eq (SUBREG_BYTE (op), 0))
@@ -6544,8 +6545,11 @@ rtx
 lowpart_subreg (machine_mode outer_mode, rtx expr,
 			     machine_mode inner_mode)
 {
+  int is_reg = (GET_CODE (expr) == SUBREG) && (GET_CODE (SUBREG_REG (expr)) == REG);
+
   return simplify_gen_subreg (outer_mode, expr, inner_mode,
-			      subreg_lowpart_offset (outer_mode, inner_mode, 0));
+			      subreg_lowpart_offset (outer_mode, inner_mode,
+						     is_reg));
 }
 
 /* Simplify X, an rtx expression.

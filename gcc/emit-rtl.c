@@ -1008,6 +1008,13 @@ rtx
 gen_rtx_SUBREG (machine_mode mode, rtx reg, poly_uint64 offset)
 {
   gcc_assert (validate_subreg (mode, GET_MODE (reg), reg, offset));
+  /* If reg endianity doesn't match memory, reorder offset.  */
+  if ((GET_CODE (reg) == REG)
+      && WORDS_BIG_ENDIAN != REG_WORDS_BIG_ENDIAN
+      && (mode == DImode || mode == DFmode)
+      && maybe_ne (GET_MODE_SIZE (mode), GET_MODE_SIZE (GET_MODE (reg))))
+    offset = GET_MODE_SIZE (GET_MODE(reg)) - offset - 1;
+
   return gen_rtx_raw_SUBREG (mode, reg, offset);
 }
 
@@ -1649,7 +1656,7 @@ gen_highpart_mode (machine_mode outermode, machine_mode innermode, rtx exp)
 poly_uint64
 subreg_size_lowpart_offset (poly_uint64 outer_bytes,
 			    poly_uint64 inner_bytes,
-			    bool is_reg ATTRIBUTE_UNUSED)
+			    bool is_reg)
 {
   gcc_checking_assert (ordered_p (outer_bytes, inner_bytes));
   if (maybe_gt (outer_bytes, inner_bytes))
@@ -1657,6 +1664,10 @@ subreg_size_lowpart_offset (poly_uint64 outer_bytes,
     return 0;
 
   if (BYTES_BIG_ENDIAN && WORDS_BIG_ENDIAN)
+    return inner_bytes - outer_bytes;
+  if (is_reg
+      && REG_WORDS_BIG_ENDIAN != WORDS_BIG_ENDIAN
+      && maybe_eq (inner_bytes, GET_MODE_SIZE (DImode)))
     return inner_bytes - outer_bytes;
   else if (!BYTES_BIG_ENDIAN && !WORDS_BIG_ENDIAN)
     return 0;
