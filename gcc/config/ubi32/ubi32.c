@@ -5599,6 +5599,9 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 #undef TARGET_LEGITIMATE_CONSTANT_P
 #define TARGET_LEGITIMATE_CONSTANT_P ubi32_legitimate_constant_p
 
+#undef TARGET_HARD_REGNO_MODE_OK
+#define TARGET_HARD_REGNO_MODE_OK ubi32_hard_regno_mode_ok
+
 #undef TARGET_LRA_P
 #define TARGET_LRA_P hook_bool_void_false
 
