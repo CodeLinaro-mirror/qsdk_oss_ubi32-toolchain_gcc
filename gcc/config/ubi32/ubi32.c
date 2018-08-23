@@ -63,6 +63,7 @@
 #include "alias.h"
 #include "machmode.h"
 #include "diagnostic-core.h"
+#include "predict.h"
 
 /* This file should be included last.  */
 #include "target-def.h"
@@ -1004,18 +1005,6 @@ ubi32_legitimize_fdpic_address (rtx orig, rtx reg)
     }
 
   return new_rtx;
-}
-
-void
-ubi32_expand_conditional_branch (rtx *operands)
-{
-  enum rtx_code code = GET_CODE (operands[0]);
-  rtx x = operands[1];
-  rtx y = operands[2];
-  rtx label = operands[3];
-  rtx condition = gen_rtx_fmt_ee (code, VOIDmode, x, y);
-  emit_jump_insn (gen_condjump (condition, label));
-
 }
 
 /* X and Y are two things to compare using CODE.  Emit the compare insn and
@@ -4695,9 +4684,10 @@ ubi32_expand_builtin_1t_2s (enum insn_code icode, tree exp, rtx target)
 static void
 ubi32_set_jump_prob (int prob)
 {
-  rtx insn = get_last_insn ();
-  gcc_assert (JUMP_P (insn));
-  add_reg_note (insn, REG_BR_PROB, GEN_INT (prob));
+  gcc_assert (prob == 0);
+
+  rtx_insn *insn = get_last_insn ();
+  add_reg_br_prob_note (insn, profile_probability::never());
 }
 
 /* Expand the RTL for spinlock_lock.  */
@@ -4712,6 +4702,7 @@ ubi32_expand_builtin_spinlock_lock (tree exp)
   rtx lab;
   rtx jcc;
   rtx tmp;
+  rtx cc_reg;
   tree loc;
   HOST_WIDE_INT bit;
   HOST_WIDE_INT bmask;
@@ -4746,16 +4737,13 @@ ubi32_expand_builtin_spinlock_lock (tree exp)
   bmask = 1 << bit;
 
   lab = gen_label_rtx ();
-  tmp = gen_rtx_REG (E_CCWZmode, CC_REGNUM);
-  tmp = gen_rtx_NE (VOIDmode, tmp, const0_rtx);
-  tmp = gen_rtx_IF_THEN_ELSE (VOIDmode, tmp,
-			      gen_rtx_LABEL_REF (VOIDmode, lab),
-			      pc_rtx);
-  jcc = gen_rtx_SET (pc_rtx, tmp);
+  tmp = gen_rtx_REG (E_SImode, CC_REGNUM);
 
   emit_label (lab);
   emit_insn (gen_bset (mem, op1, GEN_INT (bmask)));
-  emit_jump_insn (jcc);
+  cc_reg = gen_rtx_REG (E_CCWZmode, CC_REGNUM);
+  rtx condition = gen_rtx_fmt_ee (NE, CCWZmode, cc_reg, const0_rtx);
+  emit_jump_insn (gen_condjump (condition, lab));
   ubi32_set_jump_prob (0);
 
   return const0_rtx;
@@ -4923,16 +4911,14 @@ ubi32_expand_builtin_spinlock_try_lock (tree exp, rtx target)
 
   lab = gen_label_rtx ();
   tmp = gen_rtx_REG (E_CCWZmode, CC_REGNUM);
-  tmp = gen_rtx_NE (VOIDmode, tmp, const0_rtx);
-  tmp = gen_rtx_IF_THEN_ELSE (VOIDmode, tmp,
-			      gen_rtx_LABEL_REF (VOIDmode, lab),
-			      pc_rtx);
-  jcc = gen_rtx_SET (pc_rtx, tmp);
 
   emit_move_insn (target, const0_rtx);
   emit_insn (gen_bset (mem, op1, GEN_INT (bmask)));
-  emit_jump_insn (jcc);
-  ubi32_set_jump_prob (0);
+
+  rtx cc_reg = gen_rtx_REG (E_CCWZmode, CC_REGNUM);
+  rtx condition = gen_rtx_fmt_ee (NE, CCWZmode, cc_reg, const0_rtx);
+  emit_jump_insn (gen_condjump (condition, lab));
+
   emit_move_insn (target, const1_rtx);
   emit_label (lab);
 
