@@ -66,6 +66,10 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 # include <syslog.h>
 #endif
 
+#define GENERATE_STACK_GUARD(guard,size) ubi32_stack_guard (guard, size)
+#define STACK_GUARD_MSG(msg,len) ubi32_stack_guard_msg (msg, len)
+#define STACK_GUARD_EXIT ubi32_stack_guard_exit ()
+
 void *__stack_chk_guard = 0;
 
 static void __attribute__ ((constructor))
@@ -76,6 +80,9 @@ __guard_setup (void)
   if (__stack_chk_guard != 0)
     return;
 
+#ifdef GENERATE_STACK_GUARD
+  GENERATE_STACK_GUARD (&__stack_chk_guard, sizeof(__stack_chk_guard));
+#else
 #if defined (_WIN32) && !defined (__CYGWIN__)
   HCRYPTPROV hprovider = 0;
   if (CryptAcquireContext(&hprovider, NULL, NULL, PROV_RSA_FULL,
@@ -107,6 +114,7 @@ __guard_setup (void)
   p[sizeof(__stack_chk_guard)-1] = 255;
   p[sizeof(__stack_chk_guard)-2] = '\n';
   p[0] = 0;
+#endif /* GENERATE_STACK_GUARD */
 }
 
 static void
@@ -119,6 +127,9 @@ fail (const char *msg1, size_t msg1len, const char *msg3)
 #endif
   int fd;
 
+#ifdef STACK_GUARD_MSG
+  STACK_GUARD_MSG (msg1, msg1len);
+#else
   /* Print error message directly to the tty.  This avoids Bad Things
      happening if stderr is redirected.  */
   fd = open (_PATH_TTY, O_WRONLY);
@@ -154,7 +165,11 @@ fail (const char *msg1, size_t msg1len, const char *msg3)
   else
     syslog (LOG_CRIT, "%s", msg3);
 #endif /* HAVE_SYSLOG_H */
+#endif /* STACK_GUARD_MSG */
 
+#ifdef STACK_GUARD_EXIT
+  STACK_GUARD_EXIT;
+#else
   /* Try very hard to exit.  Note that signals may be blocked preventing
      the first two options from working.  The use of volatile is here to
      prevent optimizers from "knowing" that __builtin_trap is called first,
@@ -176,6 +191,7 @@ fail (const char *msg1, size_t msg1len, const char *msg3)
           break;
         }
   }
+#endif /* STACK_GUARD_EXIT */
 }
 
 void
