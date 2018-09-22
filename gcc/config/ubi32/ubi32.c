@@ -64,6 +64,7 @@
 #include "machmode.h"
 #include "diagnostic-core.h"
 #include "predict.h"
+#include "cfg.h"
 
 /* This file should be included last.  */
 #include "target-def.h"
@@ -79,9 +80,7 @@ static bool ubi32_fixed_condition_code_regs (unsigned int *,
 static machine_mode ubi32_cc_modes_compatible (machine_mode,
 						       machine_mode);
 static int ubi32_naked_function_p (void);
-#ifdef FIXME
 static void ubi32_machine_dependent_reorg (void);
-#endif
 static bool ubi32_assemble_integer (rtx, unsigned int, int);
 #ifdef FIXME
 static bool ubi32_callee_copies (CUMULATIVE_ARGS *, machine_mode mode,
@@ -97,9 +96,10 @@ static int ubi32_get_valid_offset_mask (machine_mode);
 static bool ubi32_cannot_force_const_mem (machine_mode, rtx x);
 #ifdef FIXME
 static unsigned char ubi32_function_ok_for_sibcall (tree decl, tree exp);
-static int ubi32_multiply_dep_p (rtx, rtx);
-static int ubi32_fpu_dep_p (rtx, rtx);
 #endif
+static int ubi32_multiply_dep_p (rtx, rtx);
+static bool ubi32_multiply_dependency_p (rtx, rtx);
+static int ubi32_fpu_dep_p (rtx_insn *, rtx);
 static void ubi32_option_override (void);
 
 /* Nonzero if this chip supports the Ubi32 v3 ISA.  */
@@ -4058,7 +4058,6 @@ ubi32_safe_attr_type (rtx_insn *insn)
   return get_attr_type (insn);
 }
 
-#ifdef FIXME
 /* Return attribute nop value of insn.  */
 
 static int
@@ -4071,18 +4070,16 @@ ubi32_safe_attr_nop (rtx_insn* insn)
   an = get_attr_nop (insn);
   return (int)an;
 }
-#endif
 
-#ifdef FIXME
 static void
 ubi32_hazard_scan (basic_block bb, int range, int addr_pad, int mac_pad, int fpu_pad)
 {
-  rtx def_insn;
+  rtx_insn *def_insn;
   FOR_BB_INSNS (bb, def_insn)
     {
       int j;
       rtx_insn *use_insn;
-      rtx_insn *insert_before = NULL_RTX;
+      rtx_insn *insert_before = 0;
       int nop_padding;
 
       /* Look for real instructions that have at least one more before the
@@ -4195,7 +4192,7 @@ ubi32_hazard_scan (basic_block bb, int range, int addr_pad, int mac_pad, int fpu
       /* If we found the need to insert a NOP then do so now.  */
       if (insert_before)
 	{
-	  rtx prev_insn;
+	  rtx_insn *prev_insn;
 	  rtx nop_rtx;
 
 	  /* Check if the instruction before the one we're going to insert
@@ -4205,7 +4202,7 @@ ubi32_hazard_scan (basic_block bb, int range, int addr_pad, int mac_pad, int fpu
 	  if (prev_insn != NULL_RTX)
 	    {
 	      if (ubi32_safe_attr_type (prev_insn) != TYPE_NOP)
-		prev_insn = NULL_RTX;
+		prev_insn = 0;
 	      else
 		{
 		  int prev_nop = ubi32_safe_attr_nop (prev_insn);
@@ -4248,7 +4245,6 @@ ubi32_hazard_scan (basic_block bb, int range, int addr_pad, int mac_pad, int fpu
 	}
     }
 }
-#endif
 
 /* Count the number of memory refs in R.  */
 static int
@@ -4277,7 +4273,6 @@ ubi32_get_mem_refs (rtx x)
   return refs;
 }
 
-#ifdef FIXME
 static int
 ubi32_get_overcommits_1 (rtx r)
 {
@@ -4321,13 +4316,11 @@ ubi32_get_overcommits (rtx insn)
 
   return 0;
 }
-#endif
 
-#ifdef FIXME
 static void
 ubi32_write_buffer_scan (basic_block bb)
 {
-  rtx insn;
+  rtx_insn *insn;
   int overcommits = 0;
   FOR_BB_INSNS (bb, insn)
     {
@@ -4382,9 +4375,7 @@ ubi32_write_buffer_scan (basic_block bb)
 	overcommits = 0;
     }
 }
-#endif
 
-#ifdef FIXME
 static void
 ubi32_machine_dependent_reorg (void)
 {
@@ -4432,7 +4423,6 @@ ubi32_machine_dependent_reorg (void)
     FOR_EACH_BB_FN (bb, cfun)
       ubi32_write_buffer_scan(bb);
 }
-#endif
 
 void
 ubi32_output_cond_jump (rtx insn ATTRIBUTE_UNUSED, rtx cond, rtx target)
@@ -5317,7 +5307,6 @@ ubi32_address_dep_p (rtx_insn *dep_insn, rtx_insn *insn)
   return 0;
 }
 
-#ifdef FIXME
 /* Returns true if expression DEP_RTX sets an accumulator register via an
    integer multiply that is used by instruction INSN.  */
 
@@ -5366,9 +5355,7 @@ ubi32_multiply_dependency_p (rtx dep_rtx, rtx insn)
 
   return false;
 }
-#endif
 
-#ifdef FIXME
 /* Return 1 if DEP_INSN sets register used in INSN in a multiply.  */
 
 static int
@@ -5397,9 +5384,7 @@ ubi32_multiply_dep_p (rtx dep_insn, rtx insn)
 
   return 0;
 }
-#endif
 
-#ifdef FIXME
 /* Returns true if expression DEP_RTX sets a register via FPU operation
    that is used by instruction INSN.  */
 
@@ -5428,14 +5413,12 @@ ubi32_fpu_dependency_p (rtx dep_rtx, rtx insn)
 
   return false;
 }
-#endif
 
-#ifdef FIXME
 /* Return 1 if DEP_INSN sets register used in INSN in an FPU instruction
    that has a hazard window.  */
 
 static int
-ubi32_fpu_dep_p (rtx dep_insn, rtx insn)
+ubi32_fpu_dep_p (rtx_insn *dep_insn, rtx insn)
 {
   rtx dep_rtx;
 
@@ -5453,7 +5436,6 @@ ubi32_fpu_dep_p (rtx dep_insn, rtx insn)
 
   return 0;
 }
-#endif
 
 /* Return a unique alias set for the GOT.  */
 
@@ -5511,10 +5493,8 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 #undef TARGET_CC_MODES_COMPATIBLE
 #define TARGET_CC_MODES_COMPATIBLE ubi32_cc_modes_compatible
 
-#ifdef FIXME
 #undef TARGET_MACHINE_DEPENDENT_REORG
 #define TARGET_MACHINE_DEPENDENT_REORG ubi32_machine_dependent_reorg
-#endif
 
 #ifdef FIXME
 #undef TARGET_FUNCTION_OK_FOR_SIBCALL
