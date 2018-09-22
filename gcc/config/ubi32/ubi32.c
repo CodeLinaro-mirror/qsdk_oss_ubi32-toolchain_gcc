@@ -4514,8 +4514,6 @@ ubi32_init_builtins (void)
   tree unsigned_ftype_unsigned_unsigned;
   tree void_ftype_vptr_unsigned;
   tree unsigned_ftype_vptr_unsigned;
-  tree void_ftype_ptr;
-  tree decl;
 
   vptr_type_node
     = build_pointer_type (build_type_variant (void_type_node, 0, 1));
@@ -4532,10 +4530,6 @@ ubi32_init_builtins (void)
     = build_function_type_list (unsigned_type_node,
 				unsigned_type_node,
 				unsigned_type_node,
-				NULL_TREE);
-  void_ftype_ptr
-    = build_function_type_list (void_type_node,
-				ptr_type_node,
 				NULL_TREE);
   void_ftype_vptr_unsigned
     = build_function_type_list (void_type_node,
@@ -4700,8 +4694,6 @@ ubi32_expand_builtin_spinlock_lock (tree exp)
   rtx mem;
   rtx op1;
   rtx lab;
-  rtx jcc;
-  rtx tmp;
   rtx cc_reg;
   tree loc;
   HOST_WIDE_INT bit;
@@ -4737,7 +4729,6 @@ ubi32_expand_builtin_spinlock_lock (tree exp)
   bmask = 1 << bit;
 
   lab = gen_label_rtx ();
-  tmp = gen_rtx_REG (E_SImode, CC_REGNUM);
 
   emit_label (lab);
   emit_insn (gen_bset (mem, op1, GEN_INT (bmask)));
@@ -4866,8 +4857,6 @@ ubi32_expand_builtin_spinlock_try_lock (tree exp, rtx target)
   rtx addr;
   rtx mem;
   rtx lab;
-  rtx jcc;
-  rtx tmp;
   rtx op1;
   tree loc;
   HOST_WIDE_INT bit;
@@ -4910,7 +4899,6 @@ ubi32_expand_builtin_spinlock_try_lock (tree exp, rtx target)
   bmask = 1 << bit;
 
   lab = gen_label_rtx ();
-  tmp = gen_rtx_REG (E_CCWZmode, CC_REGNUM);
 
   emit_move_insn (target, const0_rtx);
   emit_insn (gen_bset (mem, op1, GEN_INT (bmask)));
@@ -4933,7 +4921,6 @@ ubi32_expand_builtin (tree exp, rtx target, rtx subtarget ATTRIBUTE_UNUSED,
 {
   tree fndecl = TREE_OPERAND (CALL_EXPR_FN (exp), 0);
   int fcode = DECL_FUNCTION_CODE (fndecl);
-  rtx arg;
 
   switch (fcode)
     {
