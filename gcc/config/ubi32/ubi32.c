@@ -94,9 +94,7 @@ static rtx ubi32_expand_builtin (tree, rtx, rtx, machine_mode, int);
 static tree ubi32_fold_builtin (tree, int, tree *, bool);
 static int ubi32_get_valid_offset_mask (machine_mode);
 static bool ubi32_cannot_force_const_mem (machine_mode, rtx x);
-#ifdef FIXME
-static unsigned char ubi32_function_ok_for_sibcall (tree decl, tree exp);
-#endif
+static bool ubi32_function_ok_for_sibcall (tree decl, tree exp);
 static int ubi32_multiply_dep_p (rtx, rtx);
 static bool ubi32_multiply_dependency_p (rtx, rtx);
 static int ubi32_fpu_dep_p (rtx_insn *, rtx);
@@ -2868,7 +2866,6 @@ ubi32_expand_eh_return (rtx *operands)
     }
 }
 
-#ifdef FIXME
 /* Decide whether we can make a sibling call to a function.  DECL is the
    declaration of the function being targeted by the call and EXP is the
    CALL_EXPR representing the call.  */
@@ -2881,7 +2878,6 @@ ubi32_function_ok_for_sibcall (tree decl ATTRIBUTE_UNUSED, tree exp ATTRIBUTE_UN
 
   return true;
 }
-#endif
 
 /* Compute the offsets between eliminable registers.  */
 
@@ -5496,10 +5492,8 @@ ubi32_hard_regno_rename_ok (unsigned int from ATTRIBUTE_UNUSED, unsigned int to)
 #undef TARGET_MACHINE_DEPENDENT_REORG
 #define TARGET_MACHINE_DEPENDENT_REORG ubi32_machine_dependent_reorg
 
-#ifdef FIXME
 #undef TARGET_FUNCTION_OK_FOR_SIBCALL
 #define TARGET_FUNCTION_OK_FOR_SIBCALL ubi32_function_ok_for_sibcall
-#endif
 
 #undef TARGET_ASM_INTEGER
 #define TARGET_ASM_INTEGER ubi32_assemble_integer
