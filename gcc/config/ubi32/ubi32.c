@@ -3958,21 +3958,20 @@ ubi32_machine_dependent_reorg (void)
 void
 ubi32_output_cond_jump (rtx insn ATTRIBUTE_UNUSED, rtx cond, rtx target)
 {
-#ifdef FIXME
   rtx note;
-#endif
-  int mostly_false_jump;
+  int prob;
+  int mostly_false_jump = 0;
   rtx xoperands[2];
   rtx cc_reg;
   machine_mode cc_mode;
 
-#ifdef FIXME
   note = find_reg_note (insn, REG_BR_PROB, 0);
-  mostly_false_jump = !note || (INTVAL (XEXP (note, 0))
-				<= REG_BR_PROB_BASE / 2);
-#else
-  mostly_false_jump = 0;
-#endif
+  if (note)
+    {
+      prob = profile_probability::from_reg_br_prob_note (XINT (note, 0)).to_reg_br_prob_base ();
+      if (prob < (REG_BR_PROB_BASE / 2))
+	mostly_false_jump = 1;
+    }
 
   xoperands[0] = target;
   xoperands[1] = cond;
