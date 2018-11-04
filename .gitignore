@@ -55,3 +55,7 @@ REVISION
 /mpc*
 /gmp*
 /isl*
+
+# ignore vi swap files
+*.swp
+*.swo
