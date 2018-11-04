@@ -53,3 +53,10 @@ Generate code for semihosting environment
 mcpu=
 Target RejectNegative Joined
 Use features of given CPU
+
+mtune=
+Target RejectNegative Joined Var(ubi32_tune_string)
+Tuning for code generation
+
+TargetSave
+const char *x_ubi32_tune_string

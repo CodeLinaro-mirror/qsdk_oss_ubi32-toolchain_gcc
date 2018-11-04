@@ -142,6 +142,9 @@ static char save_regs_order[FIRST_PSEUDO_REGISTER];
 static int save_regs;
 static int save_regs_size;
 
+/* Set to 1 by -mtune=prob_unlikely to make branch prediction stricter.  */
+static int ubi32_prob_unlikely = 0;
+
 #define STACK_UNIT_BOUNDARY (STACK_BOUNDARY / BITS_PER_UNIT)
 #define ROUND_CALL_BLOCK_SIZE(BYTES) \
   (((BYTES) + (STACK_UNIT_BOUNDARY - 1)) & ~(STACK_UNIT_BOUNDARY - 1))
@@ -328,12 +331,8 @@ ubi32_option_override (void)
      the compiler.  Prevent them from causing test failures now.  */
   flag_rtl_seqabstr = 0;
 #endif
-}
 
-void
-ubi32_conditional_register_usage (void)
-{
-  /* If we're using the old ipOS ABI we need to make D10 through D13
+  /* If we're using the -mpos-abi we need to make D10 through D13
      caller-clobbered.  */
   if (TARGET_IPOS_ABI)
     {
@@ -361,16 +360,12 @@ ubi32_conditional_register_usage (void)
   if (! ubi32_v4)
     fixed_regs[A0_REGNUM] = 1;
 
-  if (ubi32_big_endian == 0)
+  if (ubi32_tune_string)
     {
-       reg_names[24] = "acc0_lo";
-       reg_names[25] = "acc0_hi";
-       reg_names[26] = "acc1_lo";
-       reg_names[27] = "acc1_hi";
-       CLEAR_HARD_REG_BIT (reg_class_contents[ACC_LO_REGS], 25);
-       CLEAR_HARD_REG_BIT (reg_class_contents[ACC_LO_REGS], 27);
-       SET_HARD_REG_BIT (reg_class_contents[ACC_LO_REGS], 24);
-       SET_HARD_REG_BIT (reg_class_contents[ACC_LO_REGS], 26);
+      if (strcmp (ubi32_tune_string, "prob_unlikely") == 0)
+	ubi32_prob_unlikely = 1;
+      else
+	warning (0, "-mtune=%s invalid, ignored", ubi32_tune_string);
     }
 }
 
@@ -3969,8 +3964,10 @@ ubi32_output_cond_jump (rtx insn ATTRIBUTE_UNUSED, rtx cond, rtx target)
   if (note)
     {
       prob = profile_probability::from_reg_br_prob_note (XINT (note, 0)).to_reg_br_prob_base ();
-      if (prob < (REG_BR_PROB_BASE / 2))
-	mostly_false_jump = 1;
+      if (ubi32_prob_unlikely)
+	mostly_false_jump = (prob <= PROB_UNLIKELY);
+      else
+	mostly_false_jump = (prob < (REG_BR_PROB_BASE / 2));
     }
 
   xoperands[0] = target;
