@@ -7731,23 +7731,11 @@ make_extraction (machine_mode mode, rtx inner, HOST_WIDE_INT pos,
       extraction_mode = insn.field_mode;
     }
 
-  /* Never narrow an object, since that might not be safe.  */
-
   if (mode != VOIDmode
       && partial_subreg_p (extraction_mode, mode))
     extraction_mode = mode;
 
-  if (!MEM_P (inner))
-    wanted_inner_mode = wanted_inner_reg_mode;
-  else
-    {
-      /* Be careful not to go beyond the extracted object and maintain the
-	 natural alignment of the memory.  */
-      wanted_inner_mode = smallest_int_mode_for_size (len);
-      while (pos % GET_MODE_BITSIZE (wanted_inner_mode) + len
-	     > GET_MODE_BITSIZE (wanted_inner_mode))
-	wanted_inner_mode = GET_MODE_WIDER_MODE (wanted_inner_mode).require ();
-    }
+  wanted_inner_mode = wanted_inner_reg_mode;
 
   orig_pos = pos;
 
