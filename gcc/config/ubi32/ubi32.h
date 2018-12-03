@@ -861,6 +861,9 @@ typedef struct ubi32_args
 #define BRANCH_COST(SPEED_P, PREDICTABLE_P) \
   ((PREDICTABLE_P) ? 1 : 3)
 
+/* Generate jumps for conditional expressions.  */
+#define LOGICAL_OP_NON_SHORT_CIRCUIT 0
+
 /* Define this macro as a C expression which is nonzero if accessing less than
    a word of memory (i.e. a `char' or a `short') is no faster than accessing a
    word of memory, i.e., if such access require more than one instruction or if
